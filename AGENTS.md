@@ -1,3 +1,23 @@
+## 🚨 CRITICAL: Task Tracking Policy
+
+**ALWAYS use `bd` (beads) for task tracking. NEVER use TodoWrite.**
+
+### Mandatory Beads Usage
+- ✅ **MUST USE**: `bd create`, `bd update`, `bd close`, `bd list` for ALL tasks
+- ❌ **PROHIBITED**: TodoWrite tool, TaskCreate, TODO comments, markdown TODO files
+- 🔧 **Before starting work**: Run `bd ready --json` to check initialization
+- 📋 **Every task starts with**: `bd create --title="..." --type=task --priority=2 --json`
+
+### Why Beads is Mandatory
+1. **Session continuity**: Tasks persist across agent sessions
+2. **Git integration**: Task IDs in commits enable full traceability
+3. **Project health**: `bd stats` shows real progress metrics
+4. **Collaboration**: All agents/developers see unified task state
+
+See `agents/beads-workflow.md` for complete reference.
+
+---
+
 ### Response Style
 
 Use the **pyramid method**:
