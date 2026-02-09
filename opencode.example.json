@@ -1,0 +1,22 @@
+{
+   "$schema": "https://opencode.ai/config.json",
+   
+   "_comment_1": "Copy this file to opencode.json and add your actual API keys",
+   "_comment_2": "The opencode.json file is gitignored and will not be committed",
+   
+   "mcp": {
+     "_comment": "MCP (Model Context Protocol) servers provide additional capabilities",
+     
+     "brave-search": {
+       "type": "local",
+       "command": [ "npx", "-y", "@brave/brave-search-mcp-server", "--transport", "http" ],
+       "enabled": true,
+       "environment": {
+         "_comment": "Get your Brave API key from https://brave.com/search/api/",
+         "BRAVE_API_KEY": "your_brave_api_key_here"
+       }
+     }
+   },
+   
+   "plugin": ["opencode-beads"]
+}

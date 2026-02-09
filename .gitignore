@@ -1,0 +1,13 @@
+# Dependencies
+node_modules
+
+# Local configuration (not committed)
+.env
+opencode.json
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
