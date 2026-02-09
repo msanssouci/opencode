@@ -8,6 +8,61 @@ These scripts are designed to work together to streamline git operations, partic
 
 ## Available Scripts
 
+### git-branch-setup.sh
+
+Automated git branch setup for beads workflow - ensures proper branch management before starting tasks.
+
+**Usage:**
+```bash
+./scripts/git-branch-setup.sh
+```
+
+**Features:**
+- Auto-detects default branch (main/master) using `git rev-parse --abbrev-ref origin/HEAD`
+- Handles three scenarios:
+  - **On default branch:** Updates from origin, creates feature branch, sets upstream tracking
+  - **On clean feature branch:** Validates no conflicts with default branch
+  - **On diverged branch:** Detects conflicts (common with squash merges), offers resolution options
+- Interactive prompts for branch naming
+- Handles uncommitted changes (offers stashing)
+- Sets upstream tracking automatically with `-u` flag
+- Stops on errors with clear messages for manual intervention
+
+**Workflow:**
+1. Detects current and default branch
+2. Checks for uncommitted changes (offers to stash)
+3. Executes appropriate scenario:
+   - **Scenario A (Default branch):** Pull → Create feature branch → Push with tracking
+   - **Scenario B (Clean branch):** Test merge → No conflicts → Ready
+   - **Scenario C (Diverged):** Test merge → Conflicts detected → Offer resolution
+
+**Branch Naming:**
+- Convention: `feature/<description>`
+- Examples: `feature/user-profile-api`, `feature/fix-login-bug`
+
+**Exit Codes:**
+- `0` - Success (branch ready for work)
+- `1` - Error (git operations failed, network issues, invalid input)
+
+**Example:**
+```bash
+# Starting from main branch
+./scripts/git-branch-setup.sh
+# ℹ️  Default branch: main
+# ℹ️  Current branch: main
+# ℹ️  On default branch - updating from origin...
+# ✅ Default branch updated
+# 
+# Enter feature branch name (without 'feature/' prefix): user-profile-api
+# ℹ️  Creating branch: feature/user-profile-api
+# ✅ Ready to work on feature/user-profile-api
+```
+
+**Integration with Beads:**
+Git branch setup is **infrastructure preparation**, not tracked work. Run this BEFORE creating beads issues. See [beads-workflow.md](../agents/beads-workflow.md) for full workflow integration.
+
+---
+
 ### create-commit.sh
 
 Creates a git commit with the provided message.
@@ -128,7 +183,33 @@ git add .
 
 ## Integration Patterns
 
-### Pattern 1: AI-Generated Commits
+### Pattern 1: Beads + Git Branch Setup
+
+```bash
+# 1. Setup git branch (infrastructure - not tracked)
+./scripts/git-branch-setup.sh
+# Creates feature/user-profile-api with upstream tracking
+
+# 2. Create beads issue (tracking begins)
+bd create --title="Add user profile API" --type=feature --priority=2 --json
+# Returns: beads-102
+
+# 3. Claim work
+bd update beads-102 --status=in_progress --json
+
+# 4. Make code changes
+vim src/api/profile.ts
+
+# 5. Run checks and commit
+./scripts/run-precommit.sh
+git add .
+./scripts/create-commit.sh "feat: add user profile endpoint [beads-102]"
+
+# 6. Close beads issue
+bd close beads-102 --reason="Implemented GET /api/profile endpoint" --json
+```
+
+### Pattern 2: AI-Generated Commits
 
 ```bash
 # 1. Make code changes
@@ -147,7 +228,7 @@ git add src/
 ./scripts/create-commit.sh "feat: add JWT authentication middleware"
 ```
 
-### Pattern 2: Pre-commit Validation
+### Pattern 2: AI-Generated Commits
 
 ```bash
 # 1. Make changes
@@ -163,7 +244,16 @@ git add .
 git commit -m "fix: resolve linting issues"
 ```
 
-### Pattern 3: Fast Iteration (Skip Tests)
+### Pattern 3: Pre-commit Validation
+
+```bash
+# For rapid development when tests are slow
+./scripts/run-precommit.sh --skip-tests
+git add .
+git commit -m "wip: implementing feature X"
+```
+
+### Pattern 4: Fast Iteration (Skip Tests)
 
 ```bash
 # For rapid development when tests are slow
