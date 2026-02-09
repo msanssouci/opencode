@@ -1,7 +1,8 @@
 ---
-Version: 2.0.0
+Version: 2.1.0
 Last Updated: 2026-02-09
 Changelog:
+- 2.1.0 (2026-02-09): Added "Decision Tree: Should I Create a Beads Task?" section with visual flow and examples
 - 2.0.0 (2026-02-09): Split into core policy (agents/) + detailed guide (skills/) for 69% token reduction
 - 1.3.0 (2026-02-09): Added Session Start Checklist, beads commit conventions, stale task handling, and validation guidance
 - 1.2.0 (2026-02-09): Added Git Branch Setup checklist with upstream tracking and automation script
@@ -82,6 +83,139 @@ bd init  # Initialize beads (one-time setup)
 2. **Collaboration**: Other agents/developers see your work
 3. **Project health**: `bd stats` shows progress metrics
 4. **Git integration**: Task IDs in commits enable traceability
+
+---
+
+## 🤔 Decision Tree: Should I Create a Beads Task?
+
+**When you receive a request, ask yourself:**
+
+### ✅ ALWAYS Create a Beads Task For:
+
+1. **File Operations**
+   - Creating new files (code, docs, configs)
+   - Modifying existing files (bug fixes, features, refactoring)
+   - Deleting files (cleanup, removal)
+
+2. **Multi-Step Work**
+   - Anything requiring 2+ tool invocations
+   - Work spanning multiple files/directories
+   - Tasks with dependencies or prerequisites
+
+3. **Substantial Deliverables**
+   - Documentation (README, guides, diagrams)
+   - Features or enhancements
+   - Bug fixes or refactoring
+   - Infrastructure changes (CI/CD, Docker, configs)
+
+4. **Work That Will Be Committed**
+   - ANY changes that will result in `git commit`
+   - Even "simple" docs or "quick" config changes
+
+### ❌ Do NOT Create Beads Tasks For:
+
+1. **Read-Only Information Requests**
+   - Explaining how code works
+   - Answering questions about architecture
+   - Reading files without modification
+   - Providing code examples without writing files
+
+2. **One-Off Commands**
+   - Running `git status` or `npm test`
+   - Single command execution for information
+   - Interactive troubleshooting (no file changes)
+
+3. **Pure Conversation**
+   - Discussing design approaches
+   - Reviewing existing code
+   - Planning (before deciding to implement)
+
+### 🔍 Decision Flow
+
+```
+┌─────────────────────────────────────┐
+│   User makes a request              │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+    ┌──────────────────────┐
+    │ Will I create/modify │
+    │      ANY files?      │
+    └──────┬───────┬───────┘
+           │       │
+         YES      NO
+           │       │
+           │       ▼
+           │  ┌─────────────────────┐
+           │  │ Is it multi-step    │
+           │  │ work (2+ commands)? │
+           │  └──────┬───────┬──────┘
+           │         │       │
+           │        YES     NO
+           │         │       │
+           ▼         ▼       ▼
+    ┌─────────┐  ┌──────┐  ┌────────────┐
+    │ CREATE  │  │CREATE│  │ NO BEADS   │
+    │ BEADS   │  │BEADS │  │ TASK       │
+    │ TASK    │  │TASK  │  │ NEEDED     │
+    └─────────┘  └──────┘  └────────────┘
+```
+
+### 📝 Examples
+
+#### ✅ CREATE Beads Task:
+
+```
+User: "Generate sequence diagrams for the API"
+Agent: → Creates files → NEEDS BEADS TASK
+
+User: "Fix the bug in UserController.kt"
+Agent: → Modifies code → NEEDS BEADS TASK
+
+User: "Update the README with new instructions"
+Agent: → Modifies docs → NEEDS BEADS TASK
+
+User: "Refactor the authentication logic"
+Agent: → Modifies multiple files → NEEDS BEADS TASK
+
+User: "Add a new API endpoint"
+Agent: → Creates/modifies files → NEEDS BEADS TASK
+```
+
+#### ❌ NO Beads Task:
+
+```
+User: "How does the authentication flow work?"
+Agent: → Reads files, explains → NO BEADS TASK
+
+User: "What's the current git status?"
+Agent: → Runs command → NO BEADS TASK
+
+User: "Show me the UserController code"
+Agent: → Reads file → NO BEADS TASK
+
+User: "Should we use Redis or Memcached?"
+Agent: → Discussion only → NO BEADS TASK (until decision to implement)
+
+User: "Run the tests"
+Agent: → Single command → NO BEADS TASK
+```
+
+### 🎯 Key Principle
+
+**"If it will be committed to git, it needs a beads task."**
+
+When in doubt, **default to creating a beads task**. The overhead is minimal, and the benefits (traceability, session recovery, project health) are substantial.
+
+### ⚠️ What If I'm Unsure?
+
+**Option 1: Ask the user**
+> "This looks like substantial work. Should I create a beads task for tracking?"
+
+**Option 2: Default to YES**
+- Creating an unnecessary task is low-cost
+- Missing task tracking can lose work between sessions
+- Better safe than sorry
 
 ---
 
