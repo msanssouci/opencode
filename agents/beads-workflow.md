@@ -1,7 +1,8 @@
 ---
-Version: 1.2.0
+Version: 1.3.0
 Last Updated: 2026-02-09
 Changelog:
+- 1.3.0 (2026-02-09): Added Session Start Checklist, beads commit conventions, stale task handling, and validation guidance
 - 1.2.0 (2026-02-09): Added Git Branch Setup checklist with upstream tracking and automation script
 - 1.1.0 (2026-02-09): Added "Before You Start" section with bd init instructions
 - 1.0.0 (2026-02-08): Initial creation - extracted from project AGENTS.md
@@ -25,6 +26,43 @@ bd init
 ```
 
 This creates a `.beads/` directory with your task database. You only need to do this once per project.
+
+---
+
+## 🏁 Session Start Checklist (MANDATORY)
+
+**Run these commands at the START of every work session:**
+
+```bash
+# 1. Git Branch Setup (infrastructure - not tracked in beads)
+~/.config/opencode/scripts/git-branch-setup.sh
+# OR follow manual checklist in "Git Branch Setup" section below
+
+# 2. Check beads initialization
+bd ready --json  # Should show available work OR empty list (not an error)
+
+# 3. Check for stale tasks from previous sessions
+bd list --status=in_progress --json  # Should be empty or tasks you're continuing
+
+# 4. Plan your work
+bd list --status=open --json  # Review existing open tasks
+# OR
+bd create --title="..." --type=task --priority=2 --description="Detailed context" --json
+
+# 5. Claim a task (tracking begins)
+bd update <id> --status=in_progress --json
+```
+
+**If `bd ready` shows "Error: no beads database found":**
+```bash
+bd init  # Initialize beads (one-time setup)
+```
+
+**Why this matters:**
+- ✅ Ensures you're working on latest code (git branch setup)
+- ✅ Finds existing work before creating duplicates
+- ✅ Identifies abandoned tasks from interrupted sessions
+- ✅ Creates proper tracking from the start (not retroactively)
 
 ---
 
@@ -481,17 +519,130 @@ git commit -m "feat: initial implementation of user profile [beads-102]"
 git push  # Upstream already set with -u flag
 ```
 
+### Committing Beads Changes
+
+**CRITICAL:** Beads JSONL files should be committed separately from feature work for clarity.
+
+```bash
+# After feature work is committed:
+git log -1 --oneline
+# 9343930 refactor(test): complete service test migration to MockK and fixtures
+
+# Sync beads to JSONL and commit separately:
+bd sync --flush-only
+git add .beads/issues.jsonl .beads/interactions.jsonl
+git commit -m "chore: sync beads tracking for service test refactoring
+
+- Closed: planit-assortment-scenarios-api-6gj (test fixtures)
+- Closed: planit-assortment-scenarios-api-3no (assertion helpers)
+- Closed: planit-assortment-scenarios-api-yua (service test conversion)
+- Closed: planit-assortment-scenarios-api-7gs (quality gates)"
+
+# Now push everything together:
+git push origin feature/<branch-name>
+```
+
+**Why separate commits?**
+- ✅ Feature commits = code changes (reviewable in PR)
+- ✅ Beads commits = task tracking metadata (informational)
+- ✅ Keeps PR diffs focused on actual code changes
+- ✅ Makes it easy to see which tasks were completed in each feature
+
+**Common mistake:** Forgetting to commit beads changes at all, leaving `.beads/issues.jsonl` modified but uncommitted.
+
 ### When to Sync
 ```bash
-# At session end (before git push)
+# MANDATORY: At session end (before git push)
 bd sync --flush-only
+git add .beads/issues.jsonl .beads/interactions.jsonl
+git commit -m "chore: sync beads tracking for [feature-name]"
 
-# After major milestone
+# After major milestone (multiple tasks closed)
 bd sync --flush-only
 
 # Before long break (lunch, end of day)
 bd sync --flush-only
 ```
+
+### Validate Beads State Before Pushing
+
+**Run validation script (recommended):**
+```bash
+~/.config/opencode/scripts/validate-beads-state.sh
+```
+
+**What it checks:**
+- ✅ Beads initialization
+- ✅ Uncommitted `.beads/` changes
+- ✅ Tasks stuck in `in_progress` state
+- ✅ Summary of open tasks
+
+**Manual validation (if script unavailable):**
+```bash
+# Check for uncommitted beads changes
+git status .beads/
+
+# Check for open or in_progress tasks (might indicate incomplete work)
+bd list --status=open,in_progress --json
+
+# If tasks are still open or in_progress:
+# ⚠️ EVALUATE: Is the work truly incomplete, or did you forget to close them?
+# - If complete: Close them now with bd close
+# - If incomplete: Document in task notes why they remain open
+# - If blocked: Add blockers with bd dep add
+```
+
+**When to run:**
+- Before `git push` (part of session completion)
+- After `bd sync --flush-only`
+- When unsure if beads state is clean
+
+---
+
+## Dealing with Stale or Orphaned Tasks
+
+**Scenario:** You start a session and find tasks stuck in `in_progress` from a previous session (interrupted, crash, forgot to close).
+
+```bash
+# At session start, check for tasks stuck "in_progress"
+bd list --status=in_progress --json
+
+# Evaluate each stale task:
+```
+
+### Option 1: Continue the work
+```bash
+bd update <id> --notes="Resuming work from previous session" --json
+# ... do the work ...
+bd close <id> --reason="Completed: [what was done]" --json
+```
+
+### Option 2: Task is complete but wasn't closed
+```bash
+# If the code was already committed/pushed:
+bd close <id> --reason="Task was completed in previous session - see commit abc1234" --json
+```
+
+### Option 3: Task is no longer relevant
+```bash
+bd close <id> --reason="No longer needed due to [reason: scope change, duplicate, etc.]" --json
+```
+
+### Option 4: Task needs to be split or redefined
+```bash
+# Close the vague/oversized task
+bd close <id> --reason="Task too broad - splitting into subtasks" --json
+
+# Create smaller, well-scoped tasks
+bd create --title="Implement X" --type=task --priority=2 --description="..." --json
+bd create --title="Write tests for X" --type=task --priority=2 --description="..." --json
+```
+
+**Why this matters:**
+- ❌ Stale `in_progress` tasks pollute `bd ready` output
+- ❌ Other developers can't tell if you're actively working on it
+- ❌ Project stats (`bd stats`) become inaccurate
+- ✅ Clean state = accurate project health metrics
 
 ---
 
@@ -518,8 +669,14 @@ bd sync --flush-only
 - **Fix**: Always use `--reason="detailed explanation"`
 
 ❌ **Forgetting bd sync before session end**
-- **Impact**: Task state not exported to JSONL
+- **Impact**: Task state not exported to JSONL, `.beads/issues.jsonl` left uncommitted
 - **Fix**: Add to session completion checklist (see session-completion.md)
+- **Fix**: Run `bd sync --flush-only` then commit `.beads/issues.jsonl`
+
+❌ **Not committing .beads/issues.jsonl changes**
+- **Impact**: Task tracking history is lost, other developers can't see completed work
+- **Fix**: After `bd sync`, run `git add .beads/issues.jsonl && git commit -m "chore: sync beads tracking"`
+- **Note**: `.beads/issues.jsonl` IS tracked by git (see `.beads/.gitignore` comments)
 
 ❌ **Not checking bd ready at session start**
 - **Impact**: Miss available work, duplicate effort
@@ -533,6 +690,18 @@ bd sync --flush-only
 - **Impact**: `bd create --priority=high` FAILS (expects 0-4)
 - **Fix**: 0=critical, 1=high, 2=medium, 3=low, 4=backlog
 
+❌ **Creating tasks retroactively (after work is done)**
+- **Impact**: No real-time tracking, defeats session recovery purpose
+- **Fix**: Create tasks at session start, update status as you progress
+- **Example of bad timing**: Created at 12:24 PM, closed at 12:27 PM (3 min later) = retroactive
+- **Example of good timing**: Created at 9:00 AM, in_progress at 9:15 AM, closed at 11:30 AM = real-time
+
+❌ **Forgetting to add task descriptions**
+- **Impact**: Future sessions lack context, can't remember why task exists
+- **Fix**: Always use `--description="Detailed context"` when creating tasks
+- **Good**: `bd create --title="Fix null pointer" --description="UserService.validate() throws NPE when email is null - add null check before regex validation"`
+- **Bad**: `bd create --title="Fix null pointer"` (no description)
+
 ---
 
 ## Quick Reference Card
@@ -541,14 +710,22 @@ bd sync --flush-only
 ╔══════════════════════════════════════════════════════════════╗
 ║  BEADS QUICK REFERENCE                                       ║
 ╠══════════════════════════════════════════════════════════════╣
-║  First Time:       bd init                                   ║
-║  Git Setup:        git-branch-setup.sh (or manual checklist) ║
-║  Start Session:    bd ready --json                           ║
-║  Create Task:      bd create --title="..." -t task -p 2      ║
-║  Claim Work:       bd update <id> --status=in_progress       ║
-║  Add Progress:     bd update <id> --notes="..."              ║
-║  Close Task:       bd close <id> --reason="..."              ║
-║  End Session:      bd sync --flush-only                      ║
+║  SESSION START CHECKLIST:                                    ║
+║  1. Git branch setup:  git-branch-setup.sh                   ║
+║  2. Check beads ready: bd ready --json                       ║
+║  3. Check stale tasks: bd list --status=in_progress --json   ║
+║  4. Create/find task:  bd create --title="..." -t task -p 2  ║
+║  5. Claim work:        bd update <id> --status=in_progress   ║
+╠══════════════════════════════════════════════════════════════╣
+║  DURING WORK:                                                ║
+║  Add progress notes:   bd update <id> --notes="..."          ║
+║  Close task:           bd close <id> --reason="..."          ║
+╠══════════════════════════════════════════════════════════════╣
+║  SESSION END CHECKLIST:                                      ║
+║  1. Sync to JSONL:     bd sync --flush-only                  ║
+║  2. Commit beads:      git add .beads/issues.jsonl           ║
+║                        git commit -m "chore: sync beads..."  ║
+║  3. Push all:          git push                              ║
 ╠══════════════════════════════════════════════════════════════╣
 ║  Git Workflow:     feature/<name> → git push -u origin       ║
 ║  Branch Script:    ~/.config/opencode/scripts/git-branch-setup.sh ║

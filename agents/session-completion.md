@@ -1,7 +1,8 @@
 ---
-Version: 1.0.0
-Last Updated: 2026-02-08
+Version: 1.1.0
+Last Updated: 2026-02-09
 Changelog:
+- 1.1.0 (2026-02-09): Added explicit beads JSONL commit step to git workflow
 - 1.0.0 (2026-02-08): Initial creation - extracted from project AGENTS.md
 ---
 
@@ -111,29 +112,83 @@ bd close beads-123 --reason="Fixed null pointer in AuthHandler.validate(), added
 
 ---
 
-### Step 5: Export Beads State
+### Step 5: Export Beads State & Commit
+
+**CRITICAL:** Beads JSONL files MUST be committed to preserve task tracking history.
 
 ```bash
+# 1. Export task changes to JSONL
 bd sync --flush-only
+
+# 2. Check what changed
+git status .beads/
+
+# 3. Commit beads changes (separate from feature commits)
+git add .beads/issues.jsonl .beads/interactions.jsonl
+git commit -m "chore: sync beads tracking for [feature/session name]
+
+- Closed: [task-id] ([brief description])
+- Closed: [task-id] ([brief description])
+- Updated: [task-id] ([progress notes])"
+```
+
+**Example:**
+```bash
+bd sync --flush-only
+git add .beads/issues.jsonl .beads/interactions.jsonl
+git commit -m "chore: sync beads tracking for service test refactoring
+
+- Closed: planit-assortment-scenarios-api-6gj (test fixtures)
+- Closed: planit-assortment-scenarios-api-3no (assertion helpers)
+- Closed: planit-assortment-scenarios-api-yua (service test conversion)
+- Closed: planit-assortment-scenarios-api-7gs (quality gates)"
 ```
 
 **What this does:**
-- Exports all task changes to `.beads/*.jsonl`
-- Does NOT interact with git (that's next step)
-- Ensures task state persists if session crashes
+- ✅ Exports all task changes to `.beads/*.jsonl`
+- ✅ Commits beads tracking history to git
+- ✅ Separates task metadata from feature code (cleaner PR diffs)
+- ✅ Ensures task state persists across sessions
+
+**Common mistakes:**
+- ❌ Forgetting to commit `.beads/issues.jsonl` (leaves it modified)
+- ❌ Mixing beads commits with feature commits (clutters git history)
+- ❌ Not running `bd sync` before committing (JSONL out of sync with database)
+
+**Note:** `.beads/issues.jsonl` IS tracked by git. See `.beads/.gitignore` which explicitly states JSONL files are tracked.
 
 ---
 
 ### Step 6: Git Workflow
 
+**Option A: Use validation script (recommended):**
 ```bash
-# 1. Pull latest changes
+# 1. Validate beads state
+~/.config/opencode/scripts/validate-beads-state.sh
+
+# 2. Pull latest changes
 git pull --rebase
 
-# 2. Push your work
+# 3. Push your work
 git push
 
-# 3. VERIFY success
+# 4. VERIFY success
+git status
+```
+
+**Option B: Manual workflow:**
+```bash
+# 1. Check beads state manually
+git status .beads/
+bd list --status=in_progress --json  # Should be empty
+
+# 2. Pull latest changes
+git pull --rebase
+
+# 3. Push your work
+git push
+
+# 4. VERIFY success
 git status
 ```
 
@@ -280,11 +335,14 @@ Before Step 6 (Git Workflow), also run:
 │  ☐ 3. Run quality gates (just test-all / lint / build) │
 │  ☐ 4. Close completed work (bd close)                  │
 │  ☐ 5. Export beads (bd sync --flush-only)              │
-│  ☐ 6. Git push (git pull --rebase && git push)         │
-│  ☐ 7. Verify clean (bd ready, git status)              │
+│  ☐ 6. Commit beads (git add .beads/*.jsonl)            │
+│       git commit -m "chore: sync beads tracking..."    │
+│  ☐ 7. Git push (git pull --rebase && git push)         │
+│  ☐ 8. Verify clean (bd ready, git status)              │
 ├─────────────────────────────────────────────────────────┤
-│  CRITICAL: Work NOT complete until git status shows     │
-│            "up to date with origin"                     │
+│  CRITICAL: Work NOT complete until:                     │
+│  - git status shows "up to date with origin"            │
+│  - .beads/issues.jsonl is committed (not modified)      │
 └─────────────────────────────────────────────────────────┘
 ```
 

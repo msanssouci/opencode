@@ -141,6 +141,104 @@ module.exports = { ... }
 
 ---
 
+### validate-beads-state.sh
+
+Validates beads task state before pushing code - ensures task tracking hygiene.
+
+**Usage:**
+```bash
+./scripts/validate-beads-state.sh
+```
+
+**Features:**
+- Checks beads initialization (`bd ready`)
+- Detects uncommitted `.beads/` changes
+- Finds tasks stuck in `in_progress` state
+- Reviews open tasks summary
+- Color-coded output (green=pass, yellow=warning, red=error)
+- Returns appropriate exit codes for CI/CD integration
+
+**Checks Performed:**
+1. **Beads Initialization** - Verifies `bd init` was run
+2. **Uncommitted Changes** - Checks for modified `.beads/*.jsonl` files
+3. **Stale Tasks** - Finds tasks stuck in `in_progress` from previous sessions
+4. **Open Tasks Review** - Summarizes pending work (informational)
+
+**Exit Codes:**
+- `0` - All validations passed
+- `1` - Warnings found (review recommended)
+- `2` - Critical errors (must fix before push)
+
+**Example Output (All Pass):**
+```bash
+╔═══════════════════════════════════════════╗
+║  Beads State Validation                   ║
+╚═══════════════════════════════════════════╝
+
+[1/4] Checking beads initialization...
+✓ Beads initialized
+
+[2/4] Checking for uncommitted beads changes...
+✓ No uncommitted beads changes
+
+[3/4] Checking for tasks stuck in 'in_progress'...
+✓ No tasks stuck in 'in_progress'
+
+[4/4] Reviewing open tasks...
+✓ No open tasks
+
+╔═══════════════════════════════════════════╗
+║  Validation Summary                       ║
+╚═══════════════════════════════════════════╝
+✓ All validations passed!
+  Safe to proceed with git push.
+```
+
+**Example Output (Warnings):**
+```bash
+[2/4] Checking for uncommitted beads changes...
+⚠ WARNING: Uncommitted changes in .beads/
+  Modified files:
+     M .beads/issues.jsonl
+  
+  Action required:
+    1. Run: bd sync --flush-only
+    2. Run: git add .beads/issues.jsonl .beads/interactions.jsonl
+    3. Run: git commit -m 'chore: sync beads tracking for [feature-name]'
+
+[3/4] Checking for tasks stuck in 'in_progress'...
+⚠ WARNING: 2 task(s) still in 'in_progress' state
+
+  - planit-api-123: Implement user authentication
+  - planit-api-124: Write tests for auth flow
+  
+  Action required:
+    - If complete: bd close <id> --reason='...'
+    - If partial: bd update <id> --notes='Progress: ...'
+    - If blocked: bd update <id> --status=blocked
+```
+
+**Integration with Session Completion:**
+```bash
+# Include in session completion checklist
+bd close beads-123 --reason="Feature complete"
+bd sync --flush-only
+git add .beads/issues.jsonl
+git commit -m "chore: sync beads tracking"
+
+# Run validation before pushing
+./scripts/validate-beads-state.sh
+git push
+```
+
+**When to Use:**
+- Before `git push` (part of session completion protocol)
+- After `bd sync --flush-only`
+- When returning to a project after interruption
+- As part of CI/CD pre-push hooks
+
+---
+
 ### run-precommit.sh
 
 Runs pre-commit checks (format, typecheck, lint, test) before committing.
