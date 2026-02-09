@@ -14,7 +14,9 @@
 3. **Project health**: `bd stats` shows real progress metrics
 4. **Collaboration**: All agents/developers see unified task state
 
-See `agents/beads-workflow.md` for complete reference.
+### Beads Documentation
+- **Core policy** (always loaded): `agents/beads-workflow.md` - Mandatory usage, session checklists, essential commands
+- **Detailed guide** (on-demand): Load skill `beads-workflow` for git branch setup, workflow patterns, troubleshooting
 
 ---
 
@@ -64,9 +66,15 @@ This global configuration works in tandem with project-local documentation to pr
 │                                                                  │
 │  ┌────────────────────────────────────────────────────────┐    │
 │  │ agents/beads-workflow.md          [UNIVERSAL]          │    │
-│  │ • Mandatory beads usage policy                         │    │
-│  │ • Core bd commands & patterns                          │    │
-│  │ • Technology-agnostic examples                         │    │
+│  │ • Mandatory beads usage policy (core - 234 lines)     │    │
+│  │ • Core bd commands & session checklists               │    │
+│  └────────────────────────────────────────────────────────┘    │
+│                             │                                    │
+│  ┌────────────────────────────────────────────────────────┐    │
+│  │ skills/beads-workflow/     [ON-DEMAND]                 │    │
+│  │ • Detailed git branch setup procedures                 │    │
+│  │ • Workflow patterns & troubleshooting (664 lines)      │    │
+│  │ • 69% token reduction via on-demand loading            │    │
 │  └────────────────────────────────────────────────────────┘    │
 │                             │                                    │
 │  ┌────────────────────────────────────────────────────────┐    │
@@ -139,7 +147,8 @@ Key:
 ## Quick Links
 
 ### Universal Workflows (MANDATORY)
-- [Beads Workflow](agents/beads-workflow.md) - Task tracking for ALL projects
+- [Beads Workflow](agents/beads-workflow.md) - Task tracking for ALL projects (core policy)
+  - For detailed workflows: Load skill `beads-workflow`
 - [Session Completion](agents/session-completion.md) - Protocol for ending work sessions
 - [Project Onboarding](agents/project-onboarding.md) - Setting up new projects
 
@@ -152,7 +161,7 @@ Key:
 
 ---
 
-_Last updated: 2026-02-08 (Added documentation architecture and universal workflow links)_
+_Last updated: 2026-02-09 (Split beads-workflow into core policy + skill for 69% token reduction)_
 
 ## Landing the Plane (Session Completion)
 
