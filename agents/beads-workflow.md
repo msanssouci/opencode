@@ -285,6 +285,10 @@ git push
 - **Impact**: Lost context if session interrupted
 - **Fix**: Always `bd create` BEFORE first file edit
 
+❌ **Closing task before validation**
+- **Impact**: Premature closure leads to fragmented commits
+- **Fix**: Run tests/lints/builds BEFORE closing, then commit code + close bead atomically
+
 ❌ **Forgetting bd sync before session end**
 - **Impact**: Task state not exported to JSONL
 - **Fix**: Run `bd sync --flush-only` then commit `.beads/issues.jsonl`
@@ -296,10 +300,6 @@ git push
 ❌ **Creating tasks retroactively (after work is done)**
 - **Impact**: No real-time tracking, defeats session recovery
 - **Fix**: Create tasks at session start, update status as you progress
-
-❌ **Using wrong priority values**
-- **Impact**: `bd create --priority=high` FAILS (expects 0-4)
-- **Fix**: 0=critical, 1=high, 2=medium, 3=low, 4=backlog
 
 **For complete list:** Load the beads-workflow skill
 
