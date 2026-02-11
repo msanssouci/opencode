@@ -112,98 +112,88 @@ bd close beads-123 --reason="Fixed null pointer in AuthHandler.validate(), added
 
 ---
 
-### Step 5: Export Beads State & Commit
+### Step 5: Sync Beads State
 
-**CRITICAL:** Beads JSONL files MUST be committed to preserve task tracking history.
+**CRITICAL:** Sync beads to JSONL before committing (but don't commit yet).
 
 ```bash
-# 1. Export task changes to JSONL
+# After closing all tasks, sync to JSONL
 bd sync --flush-only
 
-# 2. Check what changed
-git status .beads/
+# This writes task changes to:
+# - .beads/issues.jsonl
+# - .beads/interactions.jsonl
 
-# 3. Commit beads changes (separate from feature commits)
-git add .beads/issues.jsonl .beads/interactions.jsonl
-git commit -m "chore: sync beads tracking for [feature/session name]
-
-- Closed: [task-id] ([brief description])
-- Closed: [task-id] ([brief description])
-- Updated: [task-id] ([progress notes])"
-```
-
-**Example:**
-```bash
-bd sync --flush-only
-git add .beads/issues.jsonl .beads/interactions.jsonl
-git commit -m "chore: sync beads tracking for service test refactoring
-
-- Closed: planit-assortment-scenarios-api-6gj (test fixtures)
-- Closed: planit-assortment-scenarios-api-3no (assertion helpers)
-- Closed: planit-assortment-scenarios-api-yua (service test conversion)
-- Closed: planit-assortment-scenarios-api-7gs (quality gates)"
+# DO NOT commit yet - wait for Step 6
 ```
 
 **What this does:**
-- ✅ Exports all task changes to `.beads/*.jsonl`
-- ✅ Commits beads tracking history to git
-- ✅ Separates task metadata from feature code (cleaner PR diffs)
-- ✅ Ensures task state persists across sessions
-
-**Common mistakes:**
-- ❌ Forgetting to commit `.beads/issues.jsonl` (leaves it modified)
-- ❌ Mixing beads commits with feature commits (clutters git history)
-- ❌ Not running `bd sync` before committing (JSONL out of sync with database)
-
-**Note:** `.beads/issues.jsonl` IS tracked by git. See `.beads/.gitignore` which explicitly states JSONL files are tracked.
+- ✅ Exports all task changes from database to JSONL files
+- ✅ Prepares beads metadata for git commit
+- ⚠️ Does NOT commit anything (you do that in Step 6)
 
 ---
 
-### Step 6: Git Workflow
+### Step 6: Git Workflow - Commit Everything Together
 
-**Option A: Use validation script (recommended):**
+**CRITICAL:** Commit code changes AND beads metadata together in a single commit.
+
+**Standard workflow:**
 ```bash
-# 1. Validate beads state
-~/.config/opencode/scripts/validate-beads-state.sh
+# 1. Add all changes (code + beads metadata)
+git add <changed-files> .beads/issues.jsonl .beads/interactions.jsonl
 
-# 2. Pull latest changes
+# 2. Commit everything together with meaningful message
+git commit -m "feat: implement user profile management
+
+- Added User schema with profile fields
+- Implemented GET/POST /api/profile endpoints
+- Added validation and integration tests
+
+Closes: beads-101, beads-102, beads-103"
+
+# 3. Pull latest changes
 git pull --rebase
 
-# 3. Push your work
+# 4. Push your work
 git push
 
-# 4. VERIFY success
+# 5. VERIFY success
 git status
 ```
 
-**Option B: Manual workflow:**
+**Why single commit?**
+- ✅ **Simpler workflow**: No need to manage multiple commits
+- ✅ **Atomic changes**: Code and tracking metadata committed together
+- ✅ **Cleaner git history**: One commit per feature instead of 2-3
+- ✅ **Easier recovery**: Both code and beads state are consistent
+
+**For large features with milestones (optional two-commit pattern):**
+
+If your feature spans multiple days with natural breakpoints:
+
 ```bash
-# 1. Check beads state manually
-git status .beads/
-bd list --status=in_progress --json  # Should be empty
-
-# 2. Pull latest changes
-git pull --rebase
-
-# 3. Push your work
+# Milestone 1: Complete API work
+bd close beads-101 beads-102 --reason="API complete" --json
+bd sync --flush-only
+git add src/api/ .beads/*.jsonl
+git commit -m "feat: implement profile API\n\nCloses: beads-101, beads-102"
 git push
 
-# 4. VERIFY success
-git status
+# Continue working...
+
+# Milestone 2: Complete UI work (days later)
+bd close beads-103 beads-104 --reason="UI complete" --json
+bd sync --flush-only
+git add src/ui/ .beads/*.jsonl
+git commit -m "feat: implement profile UI\n\nCloses: beads-103, beads-104"
+git push
 ```
 
-**Expected output:**
-```
-On branch main
-Your branch is up to date with 'origin/main'.
-
-nothing to commit, working tree clean
-```
-
-**If push fails:**
-- Resolve conflicts/errors
-- Retry until success
-- NEVER leave work unpushed
+**Use two-commit pattern only when:**
+- Epic spans 2+ days with clear milestone boundaries
+- Each milestone is independently deployable
+- Default to single commit when unsure
 
 ---
 
@@ -217,9 +207,22 @@ bd list --status=in_progress --json  # Should be EMPTY or only tasks with progre
 
 **Check git:**
 ```bash
-git status                # No uncommitted changes
-git log -1                # Verify last commit is yours (if you committed)
+git status                # No uncommitted changes, up to date with remote
+git log -1                # Verify last commit includes your changes
 ```
+
+**Expected output:**
+```
+On branch feature/user-profile
+Your branch is up to date with 'origin/feature/user-profile'.
+
+nothing to commit, working tree clean
+```
+
+**If uncommitted changes remain:**
+- Check if you forgot to add files: `git add <missing-files>`
+- Check if beads sync created changes: Look at `.beads/*.jsonl`
+- Commit any remaining changes before ending session
 
 **Check project health:**
 ```bash
@@ -334,15 +337,17 @@ Before Step 6 (Git Workflow), also run:
 │  ☐ 2. Create follow-up issues (bd create)              │
 │  ☐ 3. Run quality gates (just test-all / lint / build) │
 │  ☐ 4. Close completed work (bd close)                  │
-│  ☐ 5. Export beads (bd sync --flush-only)              │
-│  ☐ 6. Commit beads (git add .beads/*.jsonl)            │
-│       git commit -m "chore: sync beads tracking..."    │
+│  ☐ 5. Sync beads (bd sync --flush-only)                │
+│  ☐ 6. Commit everything together:                      │
+│       git add <files> .beads/*.jsonl                    │
+│       git commit -m "feat: ..."                         │
 │  ☐ 7. Git push (git pull --rebase && git push)         │
 │  ☐ 8. Verify clean (bd ready, git status)              │
 ├─────────────────────────────────────────────────────────┤
 │  CRITICAL: Work NOT complete until:                     │
 │  - git status shows "up to date with origin"            │
-│  - .beads/issues.jsonl is committed (not modified)      │
+│  - No uncommitted changes in working tree               │
+│  - .beads/*.jsonl is committed (not modified)           │
 └─────────────────────────────────────────────────────────┘
 ```
 

@@ -260,22 +260,40 @@ bd sync --flush-only  # Export to JSONL (run at session end)
 
 ## 📚 Beads + Git Integration (Essential)
 
-### Commit Messages Include Beads ID
-```bash
-git commit -m "feat: add user profile endpoint [beads-102]"
-git commit -m "fix: null pointer in auth [beads-87]"
-```
+### Commit Workflow: Close → Sync → Commit
 
-### Beads Changes Committed Separately
+**CRITICAL:** Follow this exact order to avoid multiple commits per feature.
+
 ```bash
-# After feature work is committed:
+# 1. Close all beads tasks for the feature (DO NOT commit yet)
+bd close beads-xxx --reason="Implemented feature X" --json
+bd close beads-yyy --reason="Added tests for X" --json
+
+# 2. Sync beads to JSONL (DO NOT commit yet)
 bd sync --flush-only
-git add .beads/issues.jsonl .beads/interactions.jsonl
-git commit -m "chore: sync beads tracking for [feature-name]"
+
+# 3. Commit EVERYTHING together (code + beads metadata)
+git add <changed-files> .beads/issues.jsonl .beads/interactions.jsonl
+git commit -m "feat: add user profile endpoint
+
+- Implemented profile schema and API
+- Added validation and tests
+
+Closes: beads-xxx, beads-yyy"
 git push
 ```
 
-**Why:** Keeps feature commits (code) separate from tracking metadata (beads)
+### Commit Message Format
+```bash
+# Include all beads IDs in commit footer
+git commit -m "feat: description\n\nCloses: beads-xxx, beads-yyy, beads-zzz"
+```
+
+**Why this order matters:**
+- ✅ Prevents multiple commits per feature (was causing 3+ commits for simple work)
+- ✅ Keeps code and tracking metadata atomic
+- ✅ Cleaner git history
+- ✅ Easier code reviews
 
 ---
 
@@ -285,21 +303,21 @@ git push
 - **Impact**: Lost context if session interrupted
 - **Fix**: Always `bd create` BEFORE first file edit
 
-❌ **Closing task before validation**
-- **Impact**: Premature closure leads to fragmented commits
-- **Fix**: Run tests/lints/builds BEFORE closing, then commit code + close bead atomically
+❌ **Committing after each beads task**
+- **Impact**: Creates 3+ commits for simple features, noisy git history
+- **Fix**: Follow close → sync → commit pattern (all together)
 
-❌ **Forgetting bd sync before session end**
-- **Impact**: Task state not exported to JSONL
-- **Fix**: Run `bd sync --flush-only` then commit `.beads/issues.jsonl`
+❌ **Forgetting bd sync before commit**
+- **Impact**: Beads metadata not included in commit, leaves .beads/*.jsonl uncommitted
+- **Fix**: Always sync BEFORE committing: `bd sync --flush-only`
 
 ❌ **Closing task without reason**
 - **Impact**: No breadcrumbs for future debugging
 - **Fix**: Always use `--reason="detailed explanation"`
 
-❌ **Creating tasks retroactively (after work is done)**
-- **Impact**: No real-time tracking, defeats session recovery
-- **Fix**: Create tasks at session start, update status as you progress
+❌ **Not committing .beads/*.jsonl changes**
+- **Impact**: Task tracking history lost
+- **Fix**: Always include .beads/*.jsonl in your commit: `git add .beads/*.jsonl`
 
 **For complete list:** Load the beads-workflow skill
 
@@ -322,11 +340,12 @@ git push
 ║  Add progress notes:   bd update <id> --notes="..."          ║
 ║  Close task:           bd close <id> --reason="..."          ║
 ╠══════════════════════════════════════════════════════════════╣
-║  SESSION END CHECKLIST:                                      ║
-║  1. Sync to JSONL:     bd sync --flush-only                  ║
-║  2. Commit beads:      git add .beads/issues.jsonl           ║
-║                        git commit -m "chore: sync beads..."  ║
-║  3. Push all:          git push                              ║
+║  COMMIT WORKFLOW (CRITICAL - prevents multiple commits):    ║
+║  1. Close all tasks:   bd close <id1> <id2> --reason="..."  ║
+║  2. Sync to JSONL:     bd sync --flush-only                  ║
+║  3. Commit together:   git add <files> .beads/*.jsonl        ║
+║                        git commit -m "feat: ..."             ║
+║  4. Push:              git push                              ║
 ╠══════════════════════════════════════════════════════════════╣
 ║  Git Workflow:     feature/<name> → git push -u origin       ║
 ║  Branch Script:    ~/.config/opencode/scripts/git-branch-setup.sh ║

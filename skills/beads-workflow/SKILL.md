@@ -282,8 +282,20 @@ bd update beads-xxx --status=in_progress --json
 # 3. Make code changes
 # [Your tech-specific workflow - see project AGENTS.md]
 
-# 4. Close with context
+# 4. Close beads task with context (DO NOT commit yet)
 bd close beads-xxx --reason="Fixed null check in AuthHandler.validate()" --json
+
+# 5. Sync beads to JSONL (DO NOT commit yet)
+bd sync --flush-only
+
+# 6. Commit EVERYTHING together (code + beads metadata)
+git add <changed-files> .beads/issues.jsonl .beads/interactions.jsonl
+git commit -m "fix: prevent null pointer exception in login validation
+
+Added null check in AuthHandler.validate() before accessing email field.
+
+Closes: beads-xxx"
+git push
 ```
 
 ### Pattern 2: Multi-Step Feature (Epic + Tasks)
@@ -311,14 +323,47 @@ bd dep add beads-102 beads-101 --json  # API depends on schema
 bd dep add beads-103 beads-102 --json  # UI depends on API
 bd dep add beads-104 beads-103 --json  # Tests depend on UI
 
-# 4. Work through ready tasks
+# 4. Work through ready tasks (DO NOT commit after each task)
 bd ready --json  # Shows beads-101 only (no blockers)
 bd update beads-101 --status=in_progress --json
-# [Work...]
+# [Work on schema...]
 bd close beads-101 --reason="Schema defined in models/" --json
 
 bd ready --json  # Now shows beads-102 (blocker cleared)
-# [Continue pattern...]
+bd update beads-102 --status=in_progress --json
+# [Work on API...]
+bd close beads-102 --reason="API endpoint implemented" --json
+
+bd update beads-103 --status=in_progress --json
+# [Work on UI...]
+bd close beads-103 --reason="UI component built" --json
+
+bd update beads-104 --status=in_progress --json
+# [Work on tests...]
+bd close beads-104 --reason="E2E tests passing" --json
+
+# 5. Sync beads to JSONL (DO NOT commit yet)
+bd sync --flush-only
+
+# 6. Commit EVERYTHING together (code + beads metadata)
+git add <all-changed-files> .beads/issues.jsonl .beads/interactions.jsonl
+git commit -m "feat: add user profile page
+
+- Designed and implemented profile schema in models/
+- Implemented GET/POST /api/profile endpoints
+- Built ProfilePage component with form validation
+- Added E2E tests for profile creation and editing
+
+Closes: beads-100, beads-101, beads-102, beads-103, beads-104"
+git push
+
+# Alternative: Commit at logical milestones (for very large features)
+# If the epic spans multiple days with natural boundaries, you can:
+# - Complete API milestone → close beads-101, beads-102 → sync → commit → push
+# - Complete UI milestone → close beads-103 → sync → commit → push
+# - Complete tests milestone → close beads-104 → sync → commit → push
+# Each commit includes both code changes AND beads metadata together.
+# This creates 3 commits instead of 1, but each represents a complete milestone.
 ```
 
 ### Pattern 3: Refactoring
@@ -336,9 +381,25 @@ bd create --title="Extract validation logic to utility" \
 
 # 2. Work with clear scope
 bd update beads-xxx --status=in_progress --json
+# [Make all refactoring changes...]
 
-# 3. Document what changed
+# 3. Close beads task (DO NOT commit yet)
 bd close beads-xxx --reason="Extracted to libs/utils/ValidationUtils.kt, updated 3 controllers" --json
+
+# 4. Sync beads to JSONL (DO NOT commit yet)
+bd sync --flush-only
+
+# 5. Commit EVERYTHING together (code + beads metadata)
+git add <changed-files> .beads/issues.jsonl .beads/interactions.jsonl
+git commit -m "refactor: extract validation logic to shared utility
+
+Moved email, phone, and address validation from UserController,
+ProfileController, and RegistrationController to ValidationUtils.
+
+This reduces code duplication and centralizes validation logic.
+
+Closes: beads-xxx"
+git push
 ```
 
 ### Pattern 4: Emergency Hotfix (Fast-Track)
@@ -355,10 +416,26 @@ bd create --title="PROD: Payment processing failing" --type=bug --priority=0 --j
 # 2. Immediate claim
 bd update beads-xxx --status=in_progress --json
 
-# 3. Fix and close quickly
+# 3. Fix and close beads task
 bd close beads-xxx --reason="Fixed race condition in PaymentProcessor.charge()" --json
 
-# Note: Still tracked, but streamlined for urgency
+# 4. Sync beads to JSONL
+bd sync --flush-only
+
+# 5. Commit EVERYTHING together and push immediately
+git add <changed-files> .beads/issues.jsonl .beads/interactions.jsonl
+git commit -m "fix(critical): resolve payment processing race condition
+
+Fixed race condition in PaymentProcessor.charge() that caused
+duplicate charges when multiple requests arrived simultaneously.
+
+Added synchronization lock to prevent concurrent processing.
+
+Closes: beads-xxx"
+git push
+
+# Note: Hotfixes still follow the close → sync → commit pattern,
+# just executed quickly due to urgency
 ```
 
 ---
@@ -417,37 +494,109 @@ git checkout -b feature/extract-validation    # For beads-45
 
 ### Commit Message Convention
 ```bash
-# Include beads ID in commit message
-git commit -m "feat: add user profile endpoint [beads-102]"
-git commit -m "fix: null pointer in auth [beads-87]"
-git commit -m "refactor: extract validation utils [beads-45]"
+# CRITICAL: Do NOT commit after each beads task
+# Follow this order: Close tasks → Sync beads → Commit everything together
 
-# First commit on feature branch should reference the beads issue
-git commit -m "feat: initial implementation of user profile [beads-102]"
-git push  # Upstream already set with -u flag
+# Example: Single feature with multiple beads tasks
+bd close beads-101 --reason="Schema implemented" --json
+bd close beads-102 --reason="API implemented" --json
+bd close beads-103 --reason="Tests added" --json
+
+# Sync beads to JSONL (DO NOT commit yet)
+bd sync --flush-only
+
+# Then make ONE commit with code + beads metadata together
+git add <all-changed-files> .beads/issues.jsonl .beads/interactions.jsonl
+git commit -m "feat: add user profile endpoint
+
+- Implemented profile schema in models/User.kt
+- Added GET/POST /api/profile endpoints
+- Added integration tests for profile CRUD
+
+Closes: beads-101, beads-102, beads-103"
+git push
+
+# Commit message format (conventional commits):
+# <type>: <description>
+#
+# <body with details>
+#
+# Closes: beads-xxx, beads-yyy, beads-zzz
+
+# Types: feat, fix, refactor, test, docs, chore, style, perf
 ```
 
 ### Committing Beads Changes
 
-**CRITICAL:** Beads JSONL files should be committed separately from feature work for clarity.
+**CRITICAL WORKFLOW:** Close tasks → Sync beads → Commit everything together
+
+**The Single-Commit Pattern (Default/Recommended):**
 
 ```bash
-# After feature work is committed:
-git log -1 --oneline
-# 9343930 refactor(test): complete service test migration to MockK and fixtures
+# Step 1: Close all beads tasks for the feature (DO NOT commit yet)
+bd close beads-101 --reason="Implemented user schema" --json
+bd close beads-102 --reason="Built profile API" --json
+bd close beads-103 --reason="Added tests" --json
 
-# Sync beads to JSONL and commit separately:
+# Step 2: Sync beads to JSONL (writes to .beads/*.jsonl, DO NOT commit yet)
 bd sync --flush-only
-git add .beads/issues.jsonl .beads/interactions.jsonl
-git commit -m "chore: sync beads tracking for service test refactoring
 
-- Closed: planit-assortment-scenarios-api-6gj (test fixtures)
-- Closed: planit-assortment-scenarios-api-3no (assertion helpers)
-- Closed: planit-assortment-scenarios-api-yua (service test conversion)
-- Closed: planit-assortment-scenarios-api-7gs (quality gates)"
+# Step 3: Commit EVERYTHING together (code + beads metadata)
+git add src/ tests/ .beads/issues.jsonl .beads/interactions.jsonl
+git commit -m "feat: implement user profile management
 
-# Now push everything together:
-git push origin feature/<branch-name>
+- Added User schema with profile fields
+- Implemented GET/POST /api/profile endpoints  
+- Added validation for email and phone fields
+- Included integration tests with 90% coverage
+
+Closes: beads-101, beads-102, beads-103"
+
+# Step 4: Push
+git push
+```
+
+**Why this pattern?**
+- ✅ **Simplest workflow**: Close → sync → commit → push
+- ✅ **Single commit per feature**: Clean git history
+- ✅ **Atomic changes**: Code and tracking metadata together
+- ✅ **Easy recovery**: If interrupted, both code and beads state are either committed or not
+
+**The Two-Commit Pattern (Optional, for very large features):**
+
+For features spanning multiple days with natural milestone boundaries:
+
+```bash
+# Milestone 1: Complete API work
+bd close beads-101 beads-102 --reason="API milestone complete" --json
+bd sync --flush-only
+git add src/api/ .beads/*.jsonl
+git commit -m "feat: implement profile API\n\nCloses: beads-101, beads-102"
+git push
+
+# Continue working...
+
+# Milestone 2: Complete UI work (days later)
+bd close beads-103 beads-104 --reason="UI milestone complete" --json
+bd sync --flush-only
+git add src/ui/ .beads/*.jsonl
+git commit -m "feat: implement profile UI\n\nCloses: beads-103, beads-104"
+git push
+```
+
+**When to use two-commit pattern:**
+- Epic spans 2+ days with natural breakpoints
+- Each milestone is independently deployable
+- Team prefers smaller, focused commits for easier review
+
+**When NOT to use two-commit pattern:**
+- Feature takes < 1 day (use single commit)
+- Changes are tightly coupled (use single commit)
+- You're unsure (default to single commit)
+
+**What changed from old approach:**
+- ❌ OLD: Commit code → sync beads → commit metadata separately (2 commits minimum)
+- ✅ NEW: Close → sync → commit everything together (1 commit default)
 ```
 
 **Why separate commits?**
@@ -460,16 +609,29 @@ git push origin feature/<branch-name>
 
 ### When to Sync
 ```bash
-# MANDATORY: At session end (before git push)
-bd sync --flush-only
-git add .beads/issues.jsonl .beads/interactions.jsonl
-git commit -m "chore: sync beads tracking for [feature-name]"
+# CRITICAL: bd sync only writes to JSONL - it does NOT commit
+# You must commit the JSONL changes manually
 
-# After major milestone (multiple tasks closed)
+# Standard workflow: Close → Sync → Commit
+# 1. Close all beads tasks for the feature
+bd close beads-xxx beads-yyy beads-zzz --reason="Feature complete" --json
+
+# 2. Sync to JSONL (DO NOT commit yet)
 bd sync --flush-only
 
-# Before long break (lunch, end of day)
-bd sync --flush-only
+# 3. Commit code + beads metadata together
+git add src/ tests/ .beads/*.jsonl
+git commit -m "feat: meaningful description\n\nCloses: beads-xxx, beads-yyy, beads-zzz"
+git push
+
+# For large features with milestones (optional):
+# You can sync and commit at each milestone:
+# - Complete milestone 1 → close tasks → sync → commit → push
+# - Complete milestone 2 → close tasks → sync → commit → push
+# Each commit includes both code changes AND beads metadata together
+
+# DO NOT sync after every beads task - that defeats the purpose
+# Sync ONLY when you're ready to commit a feature milestone
 ```
 
 ### Validate Beads State Before Pushing
@@ -572,6 +734,12 @@ bd create --title="Write tests for X" --type=task --priority=2 --description="..
 - **Impact**: Lost context if session interrupted
 - **Fix**: Always `bd create` BEFORE first file edit
 
+❌ **Committing after each beads task completion**
+- **Impact**: Noisy git history (10+ commits per feature), harder PR reviews, less meaningful commits
+- **Fix**: Close ALL related beads tasks FIRST, then make ONE meaningful commit
+- **Example BAD**: 5 commits for "feat: add profile", "add tests", "fix lint", "update docs", "final fix"
+- **Example GOOD**: 1 commit "feat: add user profile with tests and docs - Closes: beads-101, beads-102, beads-103"
+
 ❌ **Closing task without reason**
 - **Impact**: No breadcrumbs for future debugging
 - **Fix**: Always use `--reason="detailed explanation"`
@@ -598,11 +766,10 @@ bd create --title="Write tests for X" --type=task --priority=2 --description="..
 - **Impact**: `bd create --priority=high` FAILS (expects 0-4)
 - **Fix**: 0=critical, 1=high, 2=medium, 3=low, 4=backlog
 
-❌ **Creating tasks retroactively (after work is done)**
-- **Impact**: No real-time tracking, defeats session recovery purpose
-- **Fix**: Create tasks at session start, update status as you progress
-- **Example of bad timing**: Created at 12:24 PM, closed at 12:27 PM (3 min later) = retroactive
-- **Example of good timing**: Created at 9:00 AM, in_progress at 9:15 AM, closed at 11:30 AM = real-time
+❌ **Not committing beads JSONL changes**
+- **Impact**: Task tracking history is lost, other developers can't see completed work
+- **Fix**: After feature commit + `bd sync`, run `git add .beads/*.jsonl && git commit -m "chore: sync beads tracking"`
+- **Note**: `.beads/issues.jsonl` IS tracked by git (see `.beads/.gitignore` comments)
 
 ❌ **Forgetting to add task descriptions**
 - **Impact**: Future sessions lack context, can't remember why task exists
@@ -627,8 +794,9 @@ bd create --title="Write tests for X" --type=task --priority=2 --description="..
 - **Fix**: Run `validate-beads-state.sh` before every push
 
 ❌ **Batch-closing tasks after completing all work**
-- **Impact**: No session recovery if interrupted mid-work
-- **Fix**: Close each task immediately after completing it
+- **Impact**: While this is GOOD for commits, ensure you're closing tasks as you finish them (not waiting until end of day)
+- **Fix**: Close each task immediately after completing it, THEN batch them into one commit
+- **Example**: Close beads-101 (11am), close beads-102 (2pm), close beads-103 (4pm), THEN commit at 4pm with all three IDs
 
 ---
 
@@ -639,9 +807,26 @@ bd create --title="Write tests for X" --type=task --priority=2 --description="..
 bd show <id> --json  # See full dependency graph
 ```
 
-💡 **Batch close related tasks efficiently**
+💡 **Standard workflow: Close → Sync → Commit**
 ```bash
-bd close beads-101 beads-102 beads-103 --reason="Completed user profile feature" --json
+# 1. Close all related tasks first
+bd close beads-101 --reason="Schema implemented" --json
+bd close beads-102 --reason="API implemented" --json  
+bd close beads-103 --reason="Tests added" --json
+
+# 2. Sync beads to JSONL
+bd sync --flush-only
+
+# 3. Commit everything together (code + beads)
+git add src/ tests/ .beads/*.jsonl
+git commit -m "feat: user profile feature
+
+- Implemented User schema with validation
+- Built GET/POST /api/profile endpoints
+- Added integration tests with 90% coverage
+
+Closes: beads-101, beads-102, beads-103"
+git push
 ```
 
 💡 **Add progress notes during long tasks**
@@ -658,6 +843,15 @@ bd blocked --json  # See what's waiting on dependencies
 ```bash
 # Good: feature/user-profile-api (clear intent)
 # Bad: feature/update (what update?)
+```
+
+💡 **Commit at logical milestones, not per task**
+```bash
+# For large features spanning multiple days, you can commit at milestones:
+# - Milestone 1: Backend API complete (3-4 beads tasks) → close → sync → commit
+# - Milestone 2: Frontend UI complete (2-3 beads tasks) → close → sync → commit  
+# - Milestone 3: E2E tests complete (1-2 beads tasks) → close → sync → commit
+# Each commit includes both code AND beads metadata
 ```
 
 ---
