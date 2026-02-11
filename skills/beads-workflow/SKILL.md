@@ -2,6 +2,12 @@
 name: beads-workflow
 description: Comprehensive beads task tracking workflows, git branch setup procedures, and troubleshooting guide
 compatibility: opencode
+version: 2.2.0
+last_updated: 2026-02-11
+changelog:
+  - 2.2.0 (2026-02-11) - Updated commit message format to use succinct subject line with Beads Tasks section
+  - 2.1.0 (2026-02-09) - Added decision tree for task creation
+  - 2.0.0 (2026-02-09) - Split from core policy for on-demand loading
 ---
 
 # Beads Workflow - Detailed Guide
@@ -290,11 +296,12 @@ bd sync --flush-only
 
 # 6. Commit EVERYTHING together (code + beads metadata)
 git add <changed-files> .beads/issues.jsonl .beads/interactions.jsonl
-git commit -m "fix: prevent null pointer exception in login validation
+git commit -m "fix: prevent null pointer in login validation
 
-Added null check in AuthHandler.validate() before accessing email field.
+Added null check in AuthHandler.validate() before email field access.
 
-Closes: beads-xxx"
+Beads Tasks:
+- beads-xxx: Fixed null pointer exception in login validation"
 git push
 ```
 
@@ -349,12 +356,14 @@ bd sync --flush-only
 git add <all-changed-files> .beads/issues.jsonl .beads/interactions.jsonl
 git commit -m "feat: add user profile page
 
-- Designed and implemented profile schema in models/
-- Implemented GET/POST /api/profile endpoints
-- Built ProfilePage component with form validation
-- Added E2E tests for profile creation and editing
+Complete profile feature with schema, API, UI, and E2E tests.
 
-Closes: beads-100, beads-101, beads-102, beads-103, beads-104"
+Beads Tasks:
+- beads-100: User profile page epic
+- beads-101: Designed profile schema in models/
+- beads-102: Implemented GET/POST /api/profile endpoints
+- beads-103: Built ProfilePage component with validation
+- beads-104: Added E2E tests for profile workflows"
 git push
 
 # Alternative: Commit at logical milestones (for very large features)
@@ -391,14 +400,12 @@ bd sync --flush-only
 
 # 5. Commit EVERYTHING together (code + beads metadata)
 git add <changed-files> .beads/issues.jsonl .beads/interactions.jsonl
-git commit -m "refactor: extract validation logic to shared utility
+git commit -m "refactor: extract validation to shared utility
 
-Moved email, phone, and address validation from UserController,
-ProfileController, and RegistrationController to ValidationUtils.
+Centralized validation logic to reduce duplication across controllers.
 
-This reduces code duplication and centralizes validation logic.
-
-Closes: beads-xxx"
+Beads Tasks:
+- beads-xxx: Moved validation from 3 controllers to ValidationUtils"
 git push
 ```
 
@@ -424,14 +431,12 @@ bd sync --flush-only
 
 # 5. Commit EVERYTHING together and push immediately
 git add <changed-files> .beads/issues.jsonl .beads/interactions.jsonl
-git commit -m "fix(critical): resolve payment processing race condition
+git commit -m "fix(critical): resolve payment race condition
 
-Fixed race condition in PaymentProcessor.charge() that caused
-duplicate charges when multiple requests arrived simultaneously.
+Added synchronization lock to prevent duplicate charges.
 
-Added synchronization lock to prevent concurrent processing.
-
-Closes: beads-xxx"
+Beads Tasks:
+- beads-xxx: Fixed race condition in PaymentProcessor.charge()"
 git push
 
 # Note: Hotfixes still follow the close → sync → commit pattern,
@@ -493,8 +498,11 @@ git checkout -b feature/extract-validation    # For beads-45
 ```
 
 ### Commit Message Convention
+
+**CRITICAL:** Follow conventional commit structure with succinct first line.
+
 ```bash
-# CRITICAL: Do NOT commit after each beads task
+# Do NOT commit after each beads task
 # Follow this order: Close tasks → Sync beads → Commit everything together
 
 # Example: Single feature with multiple beads tasks
@@ -509,21 +517,30 @@ bd sync --flush-only
 git add <all-changed-files> .beads/issues.jsonl .beads/interactions.jsonl
 git commit -m "feat: add user profile endpoint
 
-- Implemented profile schema in models/User.kt
-- Added GET/POST /api/profile endpoints
-- Added integration tests for profile CRUD
+Implemented profile management with schema, API endpoints, and tests.
 
-Closes: beads-101, beads-102, beads-103"
+Beads Tasks:
+- beads-101: Created User schema in models/User.kt
+- beads-102: Built GET/POST /api/profile endpoints
+- beads-103: Added integration tests with 90% coverage"
 git push
 
 # Commit message format (conventional commits):
-# <type>: <description>
+# <type>: <succinct description>           ← 50 chars max
 #
-# <body with details>
+# <detailed body - optional>                ← Explains "why" not "what"
 #
-# Closes: beads-xxx, beads-yyy, beads-zzz
+# Beads Tasks:                              ← Lists each task accomplished
+# - beads-xxx: <what this task did>
+# - beads-yyy: <what this task did>
 
-# Types: feat, fix, refactor, test, docs, chore, style, perf
+# Commit types: feat, fix, refactor, test, docs, chore, style, perf
+
+# Rules:
+# ✅ First line: 50 characters max, imperative mood ("add" not "added")
+# ✅ Body: Optional, provides context and reasoning
+# ✅ Beads section: Lists each task with specific accomplishment
+# ❌ Don't put beads IDs in subject line (keeps it clean)
 ```
 
 ### Committing Beads Changes
@@ -545,12 +562,12 @@ bd sync --flush-only
 git add src/ tests/ .beads/issues.jsonl .beads/interactions.jsonl
 git commit -m "feat: implement user profile management
 
-- Added User schema with profile fields
-- Implemented GET/POST /api/profile endpoints  
-- Added validation for email and phone fields
-- Included integration tests with 90% coverage
+Complete user profile feature with schema, API, validation, and tests.
 
-Closes: beads-101, beads-102, beads-103"
+Beads Tasks:
+- beads-101: Added User schema with profile fields
+- beads-102: Implemented GET/POST /api/profile endpoints
+- beads-103: Added validation and 90% test coverage"
 
 # Step 4: Push
 git push
@@ -571,7 +588,13 @@ For features spanning multiple days with natural milestone boundaries:
 bd close beads-101 beads-102 --reason="API milestone complete" --json
 bd sync --flush-only
 git add src/api/ .beads/*.jsonl
-git commit -m "feat: implement profile API\n\nCloses: beads-101, beads-102"
+git commit -m "feat: implement profile API
+
+Backend API implementation with schema and endpoints.
+
+Beads Tasks:
+- beads-101: Created profile schema
+- beads-102: Built GET/POST /api/profile endpoints"
 git push
 
 # Continue working...
@@ -580,7 +603,13 @@ git push
 bd close beads-103 beads-104 --reason="UI milestone complete" --json
 bd sync --flush-only
 git add src/ui/ .beads/*.jsonl
-git commit -m "feat: implement profile UI\n\nCloses: beads-103, beads-104"
+git commit -m "feat: implement profile UI
+
+Frontend UI implementation with form validation.
+
+Beads Tasks:
+- beads-103: Built ProfilePage component
+- beads-104: Added E2E tests for profile workflows"
 git push
 ```
 
@@ -621,7 +650,14 @@ bd sync --flush-only
 
 # 3. Commit code + beads metadata together
 git add src/ tests/ .beads/*.jsonl
-git commit -m "feat: meaningful description\n\nCloses: beads-xxx, beads-yyy, beads-zzz"
+git commit -m "feat: implement feature X
+
+Complete implementation with comprehensive testing.
+
+Beads Tasks:
+- beads-xxx: Implemented core functionality
+- beads-yyy: Added error handling
+- beads-zzz: Added unit and integration tests"
 git push
 
 # For large features with milestones (optional):
@@ -819,13 +855,14 @@ bd sync --flush-only
 
 # 3. Commit everything together (code + beads)
 git add src/ tests/ .beads/*.jsonl
-git commit -m "feat: user profile feature
+git commit -m "feat: add user profile feature
 
-- Implemented User schema with validation
-- Built GET/POST /api/profile endpoints
-- Added integration tests with 90% coverage
+Complete profile management with schema, API, and comprehensive tests.
 
-Closes: beads-101, beads-102, beads-103"
+Beads Tasks:
+- beads-101: Implemented User schema with validation
+- beads-102: Built GET/POST /api/profile endpoints
+- beads-103: Added integration tests with 90% coverage"
 git push
 ```
 

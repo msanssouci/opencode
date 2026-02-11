@@ -1,7 +1,9 @@
 ---
-Version: 2.1.0
-Last Updated: 2026-02-09
+Version: 2.3.0
+Last Updated: 2026-02-11
 Changelog:
+- 2.3.0 (2026-02-11): Updated commit message format to use succinct subject line with Beads Tasks section
+- 2.2.0 (2026-02-11): Added auto-load triggers for agents to recognize when to load beads-workflow skill
 - 2.1.0 (2026-02-09): Added "Decision Tree: Should I Create a Beads Task?" section with visual flow and examples
 - 2.0.0 (2026-02-09): Split into core policy (agents/) + detailed guide (skills/) for 69% token reduction
 - 1.3.0 (2026-02-09): Added Session Start Checklist, beads commit conventions, stale task handling, and validation guidance
@@ -276,18 +278,46 @@ bd sync --flush-only
 git add <changed-files> .beads/issues.jsonl .beads/interactions.jsonl
 git commit -m "feat: add user profile endpoint
 
-- Implemented profile schema and API
-- Added validation and tests
+Implemented profile management with validation and comprehensive testing.
 
-Closes: beads-xxx, beads-yyy"
+Beads Tasks:
+- beads-xxx: Created profile schema and API
+- beads-yyy: Added validation and integration tests"
 git push
 ```
 
 ### Commit Message Format
+
+**CRITICAL:** Follow conventional commit structure with succinct first line.
+
 ```bash
-# Include all beads IDs in commit footer
-git commit -m "feat: description\n\nCloses: beads-xxx, beads-yyy, beads-zzz"
+# Standard format (50 chars max for subject line):
+# <type>: <succinct description>
+# 
+# <detailed body - optional>
+# 
+# Beads Tasks:
+# - beads-xxx: <brief description of what this task accomplished>
+# - beads-yyy: <brief description of what this task accomplished>
+
+# Example:
+git commit -m "feat: add user profile endpoint
+
+Implemented user profile management with schema, API, and tests.
+
+Beads Tasks:
+- beads-101: Created User schema with validation
+- beads-102: Built GET/POST /api/profile endpoints
+- beads-103: Added integration tests with 90% coverage"
+
+# Commit types: feat, fix, refactor, test, docs, chore, style, perf
 ```
+
+**Rules:**
+- ✅ First line: 50 characters max, imperative mood ("add" not "added")
+- ✅ Body: Optional, explains "why" not "what"
+- ✅ Beads section: Lists each task with what it accomplished
+- ❌ Don't put beads IDs in subject line (keeps it clean and readable)
 
 **Why this order matters:**
 - ✅ Prevents multiple commits per feature (was causing 3+ commits for simple work)
@@ -374,6 +404,52 @@ Use skill tool with name: "beads-workflow"
 - Stale task recovery procedures
 - Complete list of common mistakes (15+ items)
 - Technology-specific integration guidance
+
+### 🤖 Auto-Load Triggers for Agents
+
+**AUTOMATICALLY load the beads-workflow skill when you encounter:**
+
+1. **Git Issues:**
+   - Branch conflicts or merge failures
+   - Squash merge problems ("already merged but shows conflicts")
+   - Diverged branch needing resolution
+   - Need for manual git branch setup steps
+   - User mentions "git conflicts", "squash merge", or "branch issues"
+
+2. **Session Recovery:**
+   - Stale tasks stuck in `in_progress` status
+   - Interrupted session recovery needed
+   - User asks "what happened to my tasks?" or "recover from yesterday"
+
+3. **Workflow Guidance:**
+   - User asks "how do I..." with any workflow pattern
+   - Need for step-by-step pattern examples (bug fix, epic, refactor, hotfix)
+   - User requests "show me the workflow" or "what's the process for..."
+
+4. **Troubleshooting:**
+   - User encounters errors with bd commands
+   - Need for complete mistakes list
+   - User asks "what am I doing wrong?" or "why isn't this working?"
+
+5. **First-Time Setup:**
+   - User is new to beads workflow
+   - User asks for detailed examples or walkthroughs
+   - User needs technology-specific integration guidance
+
+**Trigger phrases to watch for:**
+- "How do I set up my git branch?"
+- "I have merge conflicts"
+- "My tasks are stuck in progress"
+- "Show me a workflow example"
+- "What's the pattern for X?"
+- "Squash merge issue"
+- "Step-by-step guide"
+- "Detailed workflow"
+
+**When to skip auto-loading:**
+- User just needs quick command reference (already in this file)
+- Simple one-off bd command execution
+- Question answered by decision tree or quick reference card above
 
 ---
 
