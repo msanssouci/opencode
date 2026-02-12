@@ -14,6 +14,25 @@ Changelog:
 
 # Beads Workflow - Universal Task Tracking
 
+## 🚨 Mandatory Usage Policy
+
+**CRITICAL:** This guide applies to ALL projects using beads.
+
+### Rules
+- ✅ ALL agents MUST use beads for task tracking
+- ❌ PROHIBITED: TodoWrite, TaskCreate, markdown TODO files, comments with TODO
+- ❌ PROHIBITED: Starting code changes without a beads task
+- ⚠️  CONSEQUENCE: Work without beads tracking may be lost between sessions
+
+### Why Beads is Mandatory
+1. **Session continuity**: Recover context after interruptions
+2. **Collaboration**: Other agents/developers see your work
+3. **Project health**: `bd stats` shows progress metrics
+4. **Git integration**: Task IDs in commits enable traceability
+
+---
+
+
 ## 🚀 Before You Start
 
 **IMPORTANT:** Beads must be initialized before use.
@@ -33,7 +52,7 @@ This creates a `.beads/` directory with your task database. You only need to do 
 
 ---
 
-## 🏁 Session Start Checklist (MANDATORY)
+## 🚨 Session Start Checklist (MANDATORY)
 
 **Run these commands at the START of every work session:**
 
@@ -70,23 +89,6 @@ bd init  # Initialize beads (one-time setup)
 
 ---
 
-## 🚨 Mandatory Usage Policy
-
-**CRITICAL:** This guide applies to ALL projects using beads.
-
-### Rules
-- ✅ ALL agents MUST use beads for task tracking
-- ❌ PROHIBITED: TodoWrite, TaskCreate, markdown TODO files, comments with TODO
-- ❌ PROHIBITED: Starting code changes without a beads task
-- ⚠️  CONSEQUENCE: Work without beads tracking may be lost between sessions
-
-### Why Beads is Mandatory
-1. **Session continuity**: Recover context after interruptions
-2. **Collaboration**: Other agents/developers see your work
-3. **Project health**: `bd stats` shows progress metrics
-4. **Git integration**: Task IDs in commits enable traceability
-
----
 
 ## 🤔 Decision Tree: Should I Create a Beads Task?
 
