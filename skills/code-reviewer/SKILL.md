@@ -7,9 +7,9 @@ tags: [code-review, quality, security, performance]
 dependencies:
   - beads-workflow
 references:
-  - path: /Users/msanssouci/Documents/code/spending-tracker/.agents/backend-agents.md
+  - path: /Users/msanssouci/.config/opencode/stacks/backend.md
     type: backend-conventions
-  - path: /Users/msanssouci/Documents/code/spending-tracker/.agents/frontend-agents.md
+  - path: /Users/msanssouci/.config/opencode/stacks/frontend.md
     type: frontend-conventions
 ---
 
@@ -32,13 +32,13 @@ Specialized agent for comprehensive code review in the spending-tracker project.
 
 **CRITICAL: Read these files FIRST before reviewing code:**
 
-1. **Backend Conventions:** `/Users/msanssouci/Documents/code/spending-tracker/.agents/backend-agents.md`
+1. **Backend Conventions:** `/Users/msanssouci/.config/opencode/stacks/backend.md`
    - Code style (4 spaces, naming, structure)
    - Architecture patterns (Repository → Service → Controller)
    - Testing patterns (Kotest, given-when-then, fixtures)
    - Security requirements (validation, SQL injection prevention)
 
-2. **Frontend Conventions:** `/Users/msanssouci/Documents/code/spending-tracker/.agents/frontend-agents.md`
+2. **Frontend Conventions:** `/Users/msanssouci/.config/opencode/stacks/frontend.md`
    - Code style (2 spaces, no semicolons, TypeScript strict)
    - Component patterns (Server vs Client components)
    - Testing patterns (Jest + Playwright)

@@ -7,9 +7,9 @@ tags: [backend, kotlin, spring-boot, gradle, kotest, jooq, postgres]
 dependencies:
   - beads-workflow
 references:
-  - path: /Users/msanssouci/Documents/code/spending-tracker/.agents/backend-agents.md
+  - path: /Users/msanssouci/.config/opencode/stacks/backend.md
     type: documentation
-  - path: /Users/msanssouci/Documents/code/spending-tracker/.agents/examples/backend-workflows.md
+  - path: /Users/msanssouci/.config/opencode/stacks/examples/backend-workflows.md
     type: examples
 commands:
   build: just build
@@ -37,13 +37,13 @@ Specialized agent for Spring Boot/Kotlin/Gradle development in the spending-trac
 
 **CRITICAL: Read these files FIRST before implementing any task:**
 
-1. **Base Documentation:** `/Users/msanssouci/Documents/code/spending-tracker/.agents/backend-agents.md`
+1. **Base Documentation:** `/Users/msanssouci/.config/opencode/stacks/backend.md`
    - Code style guidelines (4 spaces, naming conventions)
    - Build commands (Gradle + justfile)
    - Testing patterns (Kotest, given-when-then)
    - Beads integration points
 
-2. **Workflow Examples:** `/Users/msanssouci/Documents/code/spending-tracker/.agents/examples/backend-workflows.md`
+2. **Workflow Examples:** `/Users/msanssouci/.config/opencode/stacks/examples/backend-workflows.md`
    - Adding Spring Boot REST endpoints
    - Implementing Clikt CLI commands
    - Adding shared utilities
@@ -188,8 +188,8 @@ Load skill 'backend-dev' and implement beads task spending-tracker-XXX
 bd show spending-tracker-XXX --json
 
 # 2. Read project documentation
-# - Read .agents/backend-agents.md
-# - Read .agents/examples/backend-workflows.md
+# - Read ~/.config/opencode/stacks/backend.md
+# - Read ~/.config/opencode/stacks/examples/backend-workflows.md
 # - Understand patterns and conventions
 
 # 3. Claim the task

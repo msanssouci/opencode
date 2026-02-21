@@ -51,21 +51,21 @@ Your responsibilities:
 
 **CRITICAL: Read these before planning:**
 
-1. **Backend Patterns:** `/Users/msanssouci/Documents/code/spending-tracker/.agents/backend-agents.md`
+1. **Backend Patterns:** `/Users/msanssouci/.config/opencode/stacks/backend.md`
    - Repository → Service → Controller architecture
    - Testing patterns (Kotest)
    - Build commands
 
-2. **Frontend Patterns:** `/Users/msanssouci/Documents/code/spending-tracker/.agents/frontend-agents.md`
+2. **Frontend Patterns:** `/Users/msanssouci/.config/opencode/stacks/frontend.md`
    - Component structure
    - Testing patterns (Jest + Playwright)
    - Build commands
 
-3. **Backend Workflows:** `/Users/msanssouci/Documents/code/spending-tracker/.agents/examples/backend-workflows.md`
+3. **Backend Workflows:** `/Users/msanssouci/.config/opencode/stacks/examples/backend-workflows.md`
    - How to add REST endpoints
    - How to add CLI commands
 
-4. **Frontend Workflows:** `/Users/msanssouci/Documents/code/spending-tracker/.agents/examples/frontend-workflows.md`
+4. **Frontend Workflows:** `/Users/msanssouci/.config/opencode/stacks/examples/frontend-workflows.md`
    - How to create components
    - How to add API clients
 

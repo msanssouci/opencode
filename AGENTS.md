@@ -83,6 +83,24 @@ This global configuration works in tandem with project-local documentation to pr
 │  │ • Git push requirements                                │    │
 │  │ • Clean state verification                             │    │
 │  └────────────────────────────────────────────────────────┘    │
+│                             │                                    │
+│  ┌────────────────────────────────────────────────────────┐    │
+│  │ stacks/                   [REUSABLE TECH STACKS]       │    │
+│  │ • backend.md       - Kotlin/Spring Boot/Gradle         │    │
+│  │ • frontend.md      - Next.js/React/TypeScript          │    │
+│  │ • examples/        - Workflow walkthroughs             │    │
+│  │   ├── backend-workflows.md                             │    │
+│  │   └── frontend-workflows.md                            │    │
+│  └────────────────────────────────────────────────────────┘    │
+│                             │                                    │
+│  ┌────────────────────────────────────────────────────────┐    │
+│  │ skills/                   [SPECIALIZED AGENTS]         │    │
+│  │ • backend-dev/    - References stacks/backend.md       │    │
+│  │ • frontend-dev/   - References stacks/frontend.md      │    │
+│  │ • build-orchestrator/ - Coordinates both stacks        │    │
+│  │ • code-reviewer/  - Reviews using stack conventions    │    │
+│  │ • prd-planner/    - Plans tasks using stack patterns   │    │
+│  └────────────────────────────────────────────────────────┘    │
 └────────────────────────┬────────────────────────────────────────┘
                          │
                          │ Applied to ALL projects
@@ -91,33 +109,26 @@ This global configuration works in tandem with project-local documentation to pr
 ┌─────────────────────────────────────────────────────────────────┐
 │  Project Config (e.g., spending-tracker/)                       │
 │  ┌────────────────────────────────────────────────────────┐    │
-│  │ AGENTS.md                                               │    │
-│  │ • Links to global workflows                            │    │
+│  │ .agents/AGENTS.md                                       │    │
+│  │ • References global stacks (stacks/backend.md, etc.)   │    │
+│  │ • Project-specific overrides (build commands)          │    │
 │  │ • Quick reference commands                             │    │
 │  │ • Directory structure                                  │    │
 │  └────────────────────────────────────────────────────────┘    │
 │                                                                  │
-│  ┌──────────────────────┐  ┌──────────────────────┐           │
-│  │ .agents/             │  │ .agents/             │           │
-│  │ backend-agents.md    │  │ frontend-agents.md   │           │
-│  │                      │  │                      │           │
-│  │ • Language/framework │  │ • UI framework       │           │
-│  │ • Build system       │  │ • Testing strategy   │           │
-│  │ • Code conventions   │  │ • Accessibility      │           │
-│  │ • Testing patterns   │  │ • State management   │           │
-│  └──────────────────────┘  └──────────────────────┘           │
-│                                                                  │
 │  ┌────────────────────────────────────────────────────────┐    │
-│  │ .agents/examples/                                       │    │
-│  │ • backend-workflows.md  (Concrete examples)            │    │
-│  │ • frontend-workflows.md (Step-by-step guides)          │    │
+│  │ Optional: Project-Specific Overrides                    │    │
+│  │ .agents/backend-overrides.md  (if needed)              │    │
+│  │ .agents/frontend-overrides.md (if needed)              │    │
+│  │ • Only for deviations from global stacks               │    │
 │  └────────────────────────────────────────────────────────┘    │
 └─────────────────────────────────────────────────────────────────┘
 
 Key:
 • Global docs = Universal across ALL projects (non-overridable)
-• Project docs = Technology/stack-specific (inherits from global)
-• Examples = Concrete workflows combining beads + tech patterns
+• Global stacks = Reusable tech stack configurations (backend, frontend)
+• Project docs = Minimal reference + project-specific overrides
+• Skills = Specialized agents that combine stacks + workflows
 ```
 
 ---
@@ -127,19 +138,20 @@ Key:
 ### Global Configuration (This Location)
 - **Personal Preferences**: Pyramid method, emoji usage, language settings
 - **Universal Workflows**: Task tracking (beads), session completion protocol
-- **Agent Specializations**: code-reviewer, git-commit, deep-thinker, etc.
+- **Reusable Tech Stacks**: Backend (Kotlin/Spring Boot), Frontend (Next.js/React)
+- **Specialized Skills**: backend-dev, frontend-dev, code-reviewer, etc.
 - **Project Onboarding**: How to structure new projects
 
 ### Project-Local Configuration
-- **Technology Stack**: Language, frameworks, libraries
-- **Build System**: Commands for test/lint/build/run
-- **Code Style**: Project-specific conventions
-- **Integration Points**: Where to create beads tasks in your workflow
+- **Minimal AGENTS.md**: References global stacks + project-specific overrides
+- **Build Commands**: Project-specific test/lint/build/run commands
+- **Environment Setup**: Docker, databases, ports, etc.
+- **Optional Overrides**: Only when deviating from global stack conventions
 
 ### Precedence Rules
-1. Project-local AGENTS.md overrides global for tech-specific matters
-2. Global beads-workflow.md is **MANDATORY** and non-overridable
-3. Global session-completion.md is **MANDATORY** protocol
+1. Global workflows (beads, session completion) are **MANDATORY** and non-overridable
+2. Global stacks (backend.md, frontend.md) are **DEFAULT** conventions
+3. Project-local overrides supersede global stacks when specified
 4. Personal preferences (pyramid method, emojis) always apply
 
 ---
@@ -152,6 +164,11 @@ Key:
 - [Session Completion](agents/session-completion.md) - Protocol for ending work sessions
 - [Project Onboarding](agents/project-onboarding.md) - Setting up new projects
 
+### Reusable Tech Stacks
+- [Backend Stack](stacks/backend.md) - Kotlin/Spring Boot/Gradle conventions
+- [Frontend Stack](stacks/frontend.md) - Next.js/React/TypeScript conventions
+- [Stack Examples](stacks/examples/) - Workflow walkthroughs for each stack
+
 ### Specialized Agents
 - [Code Reviewer](agents/code-reviewer.md) - Comprehensive code review
 - [Git Commit](agents/git-commit.md) - Conventional commit messages
@@ -161,7 +178,7 @@ Key:
 
 ---
 
-_Last updated: 2026-02-09 (Split beads-workflow into core policy + skill for 69% token reduction)_
+_Last updated: 2026-02-21 (Moved tech stacks to global /stacks/ directory for reusability across projects)_
 
 ## Landing the Plane (Session Completion)
 

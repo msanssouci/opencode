@@ -7,9 +7,9 @@ tags: [frontend, nextjs, react, typescript, tailwind, jest, playwright]
 dependencies:
   - beads-workflow
 references:
-  - path: /Users/msanssouci/Documents/code/spending-tracker/.agents/frontend-agents.md
+  - path: /Users/msanssouci/.config/opencode/stacks/frontend.md
     type: documentation
-  - path: /Users/msanssouci/Documents/code/spending-tracker/.agents/examples/frontend-workflows.md
+  - path: /Users/msanssouci/.config/opencode/stacks/examples/frontend-workflows.md
     type: examples
 commands:
   dev: just run-web
@@ -38,14 +38,14 @@ Specialized agent for Next.js/React/TypeScript development in the spending-track
 
 **CRITICAL: Read these files FIRST before implementing any task:**
 
-1. **Base Documentation:** `/Users/msanssouci/Documents/code/spending-tracker/.agents/frontend-agents.md`
+1. **Base Documentation:** `/Users/msanssouci/.config/opencode/stacks/frontend.md`
    - TypeScript conventions (2 spaces, no semicolons)
    - File organization (components, lib, types)
    - React best practices (DRY, state management)
    - Testing requirements (Jest + Playwright)
    - Accessibility requirements
 
-2. **Workflow Examples:** `/Users/msanssouci/Documents/code/spending-tracker/.agents/examples/frontend-workflows.md`
+2. **Workflow Examples:** `/Users/msanssouci/.config/opencode/stacks/examples/frontend-workflows.md`
    - Creating React components
    - Adding API client methods
    - Implementing pages with E2E tests
@@ -202,8 +202,8 @@ Load skill 'frontend-dev' and implement beads task spending-tracker-XXX
 bd show spending-tracker-XXX --json
 
 # 2. Read project documentation
-# - Read .agents/frontend-agents.md
-# - Read .agents/examples/frontend-workflows.md
+# - Read ~/.config/opencode/stacks/frontend.md
+# - Read ~/.config/opencode/stacks/examples/frontend-workflows.md
 # - Understand patterns and conventions
 
 # 3. Claim the task

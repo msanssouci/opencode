@@ -38,8 +38,8 @@ Every project should have:
 - **Session Completion:** [~/.config/opencode/agents/session-completion.md](~/.config/opencode/agents/session-completion.md)
 
 ### Project-Specific Guidelines (This Repo)
-- **[Technology 1]:** [.agents/backend-agents.md](.agents/backend-agents.md)
-- **[Technology 2]:** [.agents/frontend-agents.md](.agents/frontend-agents.md)
+- **[Technology 1]:** Reference or override [~/.config/opencode/stacks/backend.md](~/.config/opencode/stacks/backend.md)
+- **[Technology 2]:** Reference or override [~/.config/opencode/stacks/frontend.md](~/.config/opencode/stacks/frontend.md)
 
 ## Quick Reference
 
@@ -70,19 +70,21 @@ _For complete workflows, see .agents/ subdirectory_
 
 **Create specialized files per technology:**
 
-**.agents/backend-agents.md** - For server-side code
+**.agents/backend-agents.md** - For server-side code (or reference global stacks)
 - Build commands
 - Code style conventions
 - Framework-specific patterns
 - Testing requirements
 - Beads integration points
+- NOTE: If using global stacks, reference `~/.config/opencode/stacks/backend.md`
 
-**.agents/frontend-agents.md** - For client-side code
+**.agents/frontend-agents.md** - For client-side code (or reference global stacks)
 - Development commands
 - UI framework patterns
 - Testing strategies (unit + E2E)
 - Accessibility requirements
 - Beads integration points
+- NOTE: If using global stacks, reference `~/.config/opencode/stacks/frontend.md`
 
 **.agents/mobile-agents.md** - For mobile apps (if applicable)
 **.agents/data-agents.md** - For ML/data pipelines (if applicable)
@@ -134,6 +136,10 @@ bd agents-init [--backend=kotlin|python|go] [--frontend=react|vue|angular]
 
 **Manual alternative (for now):**
 ```bash
+# Option 1: Use global stacks (recommended for common stacks)
+# In your project root - create minimal AGENTS.md that references global stacks
+
+# Option 2: Project-specific agents (for unique tech stacks)
 # In your project root
 mkdir -p .agents/examples
 touch AGENTS.md
