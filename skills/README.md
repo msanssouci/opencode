@@ -16,7 +16,84 @@ Skills are TypeScript/JavaScript modules that:
 
 ## Current Skills
 
-*This directory is currently empty. Add your custom skills here.*
+### Multi-Agent Workflow System
+
+**Spending-tracker specialized skills for coordinated feature development:**
+
+#### `/prd` - PRD Command ⚡ (NEW!)
+**Location:** `prd-command/`  
+**Command:** `/prd "feature description"`  
+**Description:** Single-command PRD-to-implementation workflow. Analyzes requirements, creates tasks, orchestrates parallel execution, and commits.
+
+**Usage:**
+```bash
+/prd "Add budget tracking with monthly limits and alerts"
+```
+
+**What it does:**
+1. Analyzes PRD → creates beads tasks
+2. Executes 4 tasks in parallel (3-4x faster)
+3. Runs tests after each batch
+4. Commits when complete
+5. Reports statistics
+
+**Performance:** 20-30 task feature in ~40-60 minutes (vs 2-3 hours sequential)
+
+---
+
+#### `prd-planner` - PRD Analysis & Task Breakdown
+**Location:** `prd-planner/`  
+**Description:** Analyzes Product Requirement Documents and creates structured beads task breakdowns with dependencies.
+
+**Usage:** `Load skill 'prd-planner' and process PRD: "feature description"`
+
+---
+
+#### `build-orchestrator` - Multi-Agent Coordinator
+**Location:** `build-orchestrator/`  
+**Description:** Coordinates parallel execution of backend, frontend, code review, and testing subagents.
+
+**Usage:** `Load skill 'build-orchestrator' and coordinate implementation`
+
+---
+
+#### `backend-dev` - Spring Boot/Kotlin Specialist
+**Location:** `backend-dev/`  
+**Description:** Implements Spring Boot/Kotlin features following project conventions (Repository → Service → Controller).
+
+**Usage:** `Load skill 'backend-dev' and implement beads task <id>`
+
+---
+
+#### `frontend-dev` - Next.js/React Specialist
+**Location:** `frontend-dev/`  
+**Description:** Implements Next.js/React/TypeScript features following project conventions.
+
+**Usage:** `Load skill 'frontend-dev' and implement beads task <id>`
+
+---
+
+#### `code-reviewer` - Code Quality Enforcement
+**Location:** `code-reviewer/`  
+**Description:** Reviews code for DRY, SIMPLE principles, security, and performance.
+
+**Usage:** `Load skill 'code-reviewer' and review beads task <id>`
+
+---
+
+#### `test-runner` - Test Execution & Failure Management
+**Location:** `test-runner/`  
+**Description:** Executes tests with retry logic (max 3 attempts) and escalates persistent failures.
+
+**Usage:** `Load skill 'test-runner' and test beads task <id>`
+
+---
+
+#### `beads-workflow` - Task Tracking System
+**Location:** `beads-workflow/`  
+**Description:** Extended beads workflow documentation including git branch setup and troubleshooting.
+
+**Usage:** `Load skill 'beads-workflow'` (loads on-demand detailed workflows)
 
 ## Creating Custom Skills
 
