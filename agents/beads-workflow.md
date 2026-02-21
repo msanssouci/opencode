@@ -1,7 +1,8 @@
 ---
-Version: 2.3.0
-Last Updated: 2026-02-11
+Version: 3.0.0
+Last Updated: 2026-02-21
 Changelog:
+- 3.0.0 (2026-02-21): Optimized token usage - reduced from 466 lines (~5,300 tokens) to ~236 lines (~2,500 tokens) by moving detailed content to skill. 53% reduction.
 - 2.3.0 (2026-02-11): Updated commit message format to use succinct subject line with Beads Tasks section
 - 2.2.0 (2026-02-11): Added auto-load triggers for agents to recognize when to load beads-workflow skill
 - 2.1.0 (2026-02-09): Added "Decision Tree: Should I Create a Beads Task?" section with visual flow and examples
@@ -90,136 +91,27 @@ bd init  # Initialize beads (one-time setup)
 ---
 
 
-## 🤔 Decision Tree: Should I Create a Beads Task?
+## 🎯 When to Create Beads Tasks (Simplified)
 
-**When you receive a request, ask yourself:**
+**Key Principle**: "If it will be committed to git, it needs a beads task."
 
 ### ✅ ALWAYS Create a Beads Task For:
 
-1. **File Operations**
-   - Creating new files (code, docs, configs)
-   - Modifying existing files (bug fixes, features, refactoring)
-   - Deleting files (cleanup, removal)
-
-2. **Multi-Step Work**
-   - Anything requiring 2+ tool invocations
-   - Work spanning multiple files/directories
-   - Tasks with dependencies or prerequisites
-
-3. **Substantial Deliverables**
-   - Documentation (README, guides, diagrams)
-   - Features or enhancements
-   - Bug fixes or refactoring
-   - Infrastructure changes (CI/CD, Docker, configs)
-
-4. **Work That Will Be Committed**
-   - ANY changes that will result in `git commit`
-   - Even "simple" docs or "quick" config changes
+1. **File Operations** - Creating, modifying, or deleting files
+2. **Multi-Step Work** - Anything requiring 2+ tool invocations
+3. **Work That Will Be Committed** - ANY changes resulting in `git commit`
 
 ### ❌ Do NOT Create Beads Tasks For:
 
-1. **Read-Only Information Requests**
-   - Explaining how code works
-   - Answering questions about architecture
-   - Reading files without modification
-   - Providing code examples without writing files
+1. **Read-Only Requests** - Explaining code, answering questions
+2. **One-Off Commands** - Running `git status`, `npm test`, etc.
+3. **Pure Conversation** - Discussing design, planning (before implementation)
 
-2. **One-Off Commands**
-   - Running `git status` or `npm test`
-   - Single command execution for information
-   - Interactive troubleshooting (no file changes)
+### 💡 When Unsure
 
-3. **Pure Conversation**
-   - Discussing design approaches
-   - Reviewing existing code
-   - Planning (before deciding to implement)
+**Default to creating a beads task.** The overhead is minimal, and the benefits (traceability, session recovery) are substantial.
 
-### 🔍 Decision Flow
-
-```
-┌─────────────────────────────────────┐
-│   User makes a request              │
-└──────────────┬──────────────────────┘
-               │
-               ▼
-    ┌──────────────────────┐
-    │ Will I create/modify │
-    │      ANY files?      │
-    └──────┬───────┬───────┘
-           │       │
-         YES      NO
-           │       │
-           │       ▼
-           │  ┌─────────────────────┐
-           │  │ Is it multi-step    │
-           │  │ work (2+ commands)? │
-           │  └──────┬───────┬──────┘
-           │         │       │
-           │        YES     NO
-           │         │       │
-           ▼         ▼       ▼
-    ┌─────────┐  ┌──────┐  ┌────────────┐
-    │ CREATE  │  │CREATE│  │ NO BEADS   │
-    │ BEADS   │  │BEADS │  │ TASK       │
-    │ TASK    │  │TASK  │  │ NEEDED     │
-    └─────────┘  └──────┘  └────────────┘
-```
-
-### 📝 Examples
-
-#### ✅ CREATE Beads Task:
-
-```
-User: "Generate sequence diagrams for the API"
-Agent: → Creates files → NEEDS BEADS TASK
-
-User: "Fix the bug in UserController.kt"
-Agent: → Modifies code → NEEDS BEADS TASK
-
-User: "Update the README with new instructions"
-Agent: → Modifies docs → NEEDS BEADS TASK
-
-User: "Refactor the authentication logic"
-Agent: → Modifies multiple files → NEEDS BEADS TASK
-
-User: "Add a new API endpoint"
-Agent: → Creates/modifies files → NEEDS BEADS TASK
-```
-
-#### ❌ NO Beads Task:
-
-```
-User: "How does the authentication flow work?"
-Agent: → Reads files, explains → NO BEADS TASK
-
-User: "What's the current git status?"
-Agent: → Runs command → NO BEADS TASK
-
-User: "Show me the UserController code"
-Agent: → Reads file → NO BEADS TASK
-
-User: "Should we use Redis or Memcached?"
-Agent: → Discussion only → NO BEADS TASK (until decision to implement)
-
-User: "Run the tests"
-Agent: → Single command → NO BEADS TASK
-```
-
-### 🎯 Key Principle
-
-**"If it will be committed to git, it needs a beads task."**
-
-When in doubt, **default to creating a beads task**. The overhead is minimal, and the benefits (traceability, session recovery, project health) are substantial.
-
-### ⚠️ What If I'm Unsure?
-
-**Option 1: Ask the user**
-> "This looks like substantial work. Should I create a beads task for tracking?"
-
-**Option 2: Default to YES**
-- Creating an unnecessary task is low-cost
-- Missing task tracking can lose work between sessions
-- Better safe than sorry
+**For comprehensive decision tree with flowchart and examples:** Load skill `beads-workflow`
 
 ---
 
@@ -288,9 +180,7 @@ Beads Tasks:
 git push
 ```
 
-### Commit Message Format
-
-**CRITICAL:** Follow conventional commit structure with succinct first line.
+### Commit Message Format (Abbreviated)
 
 ```bash
 # Standard format (50 chars max for subject line):
@@ -299,8 +189,8 @@ git push
 # <detailed body - optional>
 # 
 # Beads Tasks:
-# - beads-xxx: <brief description of what this task accomplished>
-# - beads-yyy: <brief description of what this task accomplished>
+# - beads-xxx: <brief description>
+# - beads-yyy: <brief description>
 
 # Example:
 git commit -m "feat: add user profile endpoint
@@ -317,19 +207,19 @@ Beads Tasks:
 
 **Rules:**
 - ✅ First line: 50 characters max, imperative mood ("add" not "added")
-- ✅ Body: Optional, explains "why" not "what"
 - ✅ Beads section: Lists each task with what it accomplished
-- ❌ Don't put beads IDs in subject line (keeps it clean and readable)
+- ❌ Don't put beads IDs in subject line (keeps it clean)
+
+**For detailed examples and patterns:** Load skill `beads-workflow`
 
 **Why this order matters:**
-- ✅ Prevents multiple commits per feature (was causing 3+ commits for simple work)
+- ✅ Prevents multiple commits per feature
 - ✅ Keeps code and tracking metadata atomic
 - ✅ Cleaner git history
-- ✅ Easier code reviews
 
 ---
 
-## Common Mistakes to Avoid (Top 5)
+## Common Mistakes to Avoid (Top 3)
 
 ❌ **Starting code before creating task**
 - **Impact**: Lost context if session interrupted
@@ -343,71 +233,11 @@ Beads Tasks:
 - **Impact**: Beads metadata not included in commit, leaves .beads/*.jsonl uncommitted
 - **Fix**: Always sync BEFORE committing: `bd sync --flush-only`
 
-❌ **Closing task without reason**
-- **Impact**: No breadcrumbs for future debugging
-- **Fix**: Always use `--reason="detailed explanation"`
-
-❌ **Not committing .beads/*.jsonl changes**
-- **Impact**: Task tracking history lost
-- **Fix**: Always include .beads/*.jsonl in your commit: `git add .beads/*.jsonl`
-
-**For complete list:** Load the beads-workflow skill
+**For complete list (15+ mistakes with detailed fixes):** Load skill `beads-workflow`
 
 ---
 
-## Quick Reference Card
-
-```
-╔══════════════════════════════════════════════════════════════╗
-║  BEADS QUICK REFERENCE                                       ║
-╠══════════════════════════════════════════════════════════════╣
-║  SESSION START CHECKLIST:                                    ║
-║  1. Git branch setup:  git-branch-setup.sh                   ║
-║  2. Check beads ready: bd ready --json                       ║
-║  3. Check stale tasks: bd list --status=in_progress --json   ║
-║  4. Create/find task:  bd create --title="..." -t task -p 2  ║
-║  5. Claim work:        bd update <id> --status=in_progress   ║
-╠══════════════════════════════════════════════════════════════╣
-║  DURING WORK:                                                ║
-║  Add progress notes:   bd update <id> --notes="..."          ║
-║  Close task:           bd close <id> --reason="..."          ║
-╠══════════════════════════════════════════════════════════════╣
-║  COMMIT WORKFLOW (CRITICAL - prevents multiple commits):    ║
-║  1. Close all tasks:   bd close <id1> <id2> --reason="..."  ║
-║  2. Sync to JSONL:     bd sync --flush-only                  ║
-║  3. Commit together:   git add <files> .beads/*.jsonl        ║
-║                        git commit -m "feat: ..."             ║
-║  4. Push:              git push                              ║
-╠══════════════════════════════════════════════════════════════╣
-║  Git Workflow:     feature/<name> → git push -u origin       ║
-║  Branch Script:    ~/.config/opencode/scripts/git-branch-setup.sh ║
-╠══════════════════════════════════════════════════════════════╣
-║  Priority Scale:   0=critical  1=high  2=medium              ║
-║                    3=low       4=backlog                     ║
-╠══════════════════════════════════════════════════════════════╣
-║  Task Types:       task | bug | feature                      ║
-╚══════════════════════════════════════════════════════════════╝
-```
-
----
-
-## 📚 For Detailed Workflows
-
-**When you need comprehensive step-by-step guides**, load the beads-workflow skill:
-
-```
-Use skill tool with name: "beads-workflow"
-```
-
-**The skill provides:**
-- Git branch setup procedures (3 scenarios with decision trees)
-- Workflow patterns (simple bug fix, epic, refactoring, hotfix)
-- Squash merge conflict resolution
-- Stale task recovery procedures
-- Complete list of common mistakes (15+ items)
-- Technology-specific integration guidance
-
-### 🤖 Auto-Load Triggers for Agents
+## 🤖 Auto-Load Triggers for Agents
 
 **AUTOMATICALLY load the beads-workflow skill when you encounter:**
 
@@ -451,7 +281,27 @@ Use skill tool with name: "beads-workflow"
 **When to skip auto-loading:**
 - User just needs quick command reference (already in this file)
 - Simple one-off bd command execution
-- Question answered by decision tree or quick reference card above
+- Question answered by decision tree or quick reference above
+
+---
+
+## 📚 For Detailed Workflows
+
+**When you need comprehensive step-by-step guides**, load the beads-workflow skill:
+
+```
+Use skill tool with name: "beads-workflow"
+```
+
+**The skill provides:**
+- Git branch setup procedures (3 scenarios with decision trees)
+- Workflow patterns (simple bug fix, epic, refactoring, hotfix)
+- Squash merge conflict resolution
+- Stale task recovery procedures
+- Complete list of common mistakes (15+ items)
+- Technology-specific integration guidance
+- Quick reference cards
+- Detailed commit message examples
 
 ---
 
