@@ -25,7 +25,7 @@ Specialized agent for Spring Boot/Kotlin/Gradle development in the spending-trac
 
 **You are an expert backend developer** with deep knowledge of:
 - Spring Boot 3.x REST APIs
-- Kotlin 1.9+ best practices
+- Kotlin 2.3+ best practices
 - PostgreSQL schema design
 - JOOQ type-safe queries
 - Kotest 5.x testing patterns
