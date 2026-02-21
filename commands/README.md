@@ -8,6 +8,41 @@ Custom commands are markdown files with YAML frontmatter that define multi-step 
 
 ## Available Commands
 
+### Product Development Workflow
+
+**[prd.md](prd.md)** - End-to-End PRD Implementation
+- Analyzes product requirements documents
+- Creates structured beads task breakdown with dependencies
+- Orchestrates parallel multi-agent implementation
+- Runs quality gates (build + tests) after each batch
+- Interactive checkpoint for approval before implementation
+- Commits changes with conventional commit messages
+
+**Usage:**
+```
+/prd "Add health check endpoint at GET /api/health"
+/prd "Budget tracking: users set monthly limits per category, system alerts when exceeded"
+```
+
+**Requirements:**
+- Beads initialized (`bd ready`)
+- Docker running (`just docker-up`)
+- Clean git working directory
+- {project} project structure
+
+**[prd-continue.md](prd-continue.md)** - Resume PRD Implementation
+- Resumes implementation after task modifications
+- Picks up where `/prd` left off
+- Executes remaining tasks in parallel batches
+- Same quality gates and commit workflow
+
+**Usage:**
+```
+/prd-continue
+```
+
+**Requirements:** Same as `/prd`, plus open tasks from a previous `/prd` run
+
 ### GitHub Integration
 
 **[ghi-upsert.md](ghi-upsert.md)** - GitHub Issue Management

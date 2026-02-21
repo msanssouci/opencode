@@ -20,22 +20,22 @@ Add `POST /api/transactions` endpoint to create new spending transactions.
 ```bash
 # Create epic (optional, for organization)
 bd create --title="Transaction API endpoints" --type=feature --priority=2 --json
-# Returns: spending-tracker-200
+# Returns: {project}-200
 
 # Create implementation task
 bd create --title="Add POST /api/transactions endpoint" --type=task --priority=2 --json
-# Returns: spending-tracker-201
+# Returns: {project}-201
 
 # Create test task
 bd create --title="Write tests for TransactionController.create()" --type=task --priority=2 --json
-# Returns: spending-tracker-202
+# Returns: {project}-202
 
 # Set dependency
-bd dep add spending-tracker-202 spending-tracker-201 --json  # Tests depend on implementation
+bd dep add {project}-202 {project}-201 --json  # Tests depend on implementation
 
 # Start work
-bd ready --json  # Shows spending-tracker-201
-bd update spending-tracker-201 --status=in_progress --json
+bd ready --json  # Shows {project}-201
+bd update {project}-201 --status=in_progress --json
 ```
 
 ### Implementation Steps
@@ -129,13 +129,13 @@ just run-api
 
 ### Close Implementation Task
 ```bash
-bd close spending-tracker-201 --reason="Implemented POST /api/transactions with TransactionService and DTOs in apps/api/src/.../controller/TransactionController.kt" --json
+bd close {project}-201 --reason="Implemented POST /api/transactions with TransactionService and DTOs in apps/api/src/.../controller/TransactionController.kt" --json
 ```
 
 ### Write Tests
 ```bash
-bd ready --json  # Now shows spending-tracker-202 (blocker cleared)
-bd update spending-tracker-202 --status=in_progress --json
+bd ready --json  # Now shows {project}-202 (blocker cleared)
+bd update {project}-202 --status=in_progress --json
 ```
 
 **5. Add test**
@@ -206,7 +206,7 @@ just test
 
 ### Close Test Task
 ```bash
-bd close spending-tracker-202 --reason="Added unit tests for TransactionController.create() with MockMvc, 100% coverage in apps/api/src/test/.../TransactionControllerTest.kt" --json
+bd close {project}-202 --reason="Added unit tests for TransactionController.create() with MockMvc, 100% coverage in apps/api/src/test/.../TransactionControllerTest.kt" --json
 ```
 
 ---
@@ -220,17 +220,17 @@ Add `transaction add` CLI command to create transactions from command line.
 ```bash
 # Create implementation task
 bd create --title="Implement 'transaction add' CLI command" --type=task --priority=2 --json
-# Returns: spending-tracker-210
+# Returns: {project}-210
 
 # Create test task
 bd create --title="Test CLI command parsing and validation" --type=task --priority=2 --json
-# Returns: spending-tracker-211
+# Returns: {project}-211
 
 # Set dependency
-bd dep add spending-tracker-211 spending-tracker-210 --json
+bd dep add {project}-211 {project}-210 --json
 
 # Start work
-bd update spending-tracker-210 --status=in_progress --json
+bd update {project}-210 --status=in_progress --json
 ```
 
 ### Implementation Steps
@@ -279,7 +279,7 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.subcommands
 import com.sans.souci.spending_tracker.commands.TransactionAddCommand
 
-class SpendingTrackerCli : CliktCommand(name = "spending-tracker") {
+class SpendingTrackerCli : CliktCommand(name = "{project}") {
     override fun run() = Unit
 }
 
@@ -295,12 +295,12 @@ just run-cli add -a 42.50 -c food -d "Lunch"
 
 ### Close Implementation Task
 ```bash
-bd close spending-tracker-210 --reason="Implemented CLI 'transaction add' command with Clikt in apps/cli/src/.../TransactionAddCommand.kt" --json
+bd close {project}-210 --reason="Implemented CLI 'transaction add' command with Clikt in apps/cli/src/.../TransactionAddCommand.kt" --json
 ```
 
 ### Write Tests
 ```bash
-bd update spending-tracker-211 --status=in_progress --json
+bd update {project}-211 --status=in_progress --json
 ```
 
 **4. Add test**
@@ -337,7 +337,7 @@ class TransactionAddCommandTest {
 
 ### Close Test Task
 ```bash
-bd close spending-tracker-211 --reason="Added CLI command tests for argument parsing and validation in apps/cli/src/test/.../TransactionAddCommandTest.kt" --json
+bd close {project}-211 --reason="Added CLI command tests for argument parsing and validation in apps/cli/src/test/.../TransactionAddCommandTest.kt" --json
 ```
 
 ---
@@ -350,9 +350,9 @@ Add `CurrencyUtils.format()` extension function to format BigDecimal as currency
 ### Beads Setup
 ```bash
 bd create --title="Add CurrencyUtils.format() extension" --type=task --priority=3 --json
-# Returns: spending-tracker-220
+# Returns: {project}-220
 
-bd update spending-tracker-220 --status=in_progress --json
+bd update {project}-220 --status=in_progress --json
 ```
 
 ### Implementation Steps
@@ -410,7 +410,7 @@ class CurrencyUtilsTest {
 
 ### Close Task
 ```bash
-bd close spending-tracker-220 --reason="Added CurrencyUtils.formatCurrency() extension with locale support and 100% test coverage in libs/utils/src/.../CurrencyUtils.kt" --json
+bd close {project}-220 --reason="Added CurrencyUtils.formatCurrency() extension with locale support and 100% test coverage in libs/utils/src/.../CurrencyUtils.kt" --json
 ```
 
 ---

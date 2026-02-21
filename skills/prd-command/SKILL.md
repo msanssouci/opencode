@@ -71,14 +71,14 @@ This skill provides a `/prd` slash command that automates the complete workflow:
 6. Tag tasks appropriately
 
 **Output:**
-- Epic created (e.g., `spending-tracker-XXX`)
+- Epic created (e.g., `{project}-XXX`)
 - 5-30 implementation tasks created
 - Dependencies configured
 - Tasks marked as ready/blocked
 
 **Example output:**
 ```
-✅ Created epic: spending-tracker-abc (Budget Tracking Feature)
+✅ Created epic: {project}-abc (Budget Tracking Feature)
 ✅ Created 18 tasks:
    - 8 backend tasks (entities, repos, services, controllers, tests)
    - 6 frontend tasks (types, API clients, components, pages, tests)
@@ -156,7 +156,7 @@ feat: implement Budget Tracking feature
 Implemented via multi-agent workflow (/prd command)
 All tests passing. All builds successful.
 
-Closes spending-tracker-abc
+Closes {project}-abc
 ```
 
 **Final report:**
@@ -211,10 +211,10 @@ When invoked with `/prd "Feature description..."`, I:
 
 **Example batch invocation:**
 ```typescript
-<invoke task backend-dev for spending-tracker-123>
-<invoke task backend-dev for spending-tracker-124>
-<invoke task frontend-dev for spending-tracker-125>
-<invoke task frontend-dev for spending-tracker-126>
+<invoke task backend-dev for {project}-123>
+<invoke task backend-dev for {project}-124>
+<invoke task frontend-dev for {project}-125>
+<invoke task frontend-dev for {project}-126>
 // All 4 execute simultaneously
 ```
 
@@ -243,7 +243,7 @@ When invoked with `/prd "Feature description..."`, I:
 
 ## 📚 Project Context
 
-### spending-tracker Architecture
+### {project} Architecture
 
 **Backend (Kotlin/Spring Boot):**
 - Location: `apps/api/`
@@ -276,7 +276,7 @@ just dev            # Run API + Web concurrently
 ### Beads Integration
 
 **All tasks use beads:**
-- Prefix: `spending-tracker-XXX`
+- Prefix: `{project}-XXX`
 - Create epic first: `bd create --title="Feature Name" --type=feature --priority=2`
 - Create tasks: `bd create --title="Task" --type=task --priority=2`
 - Set dependencies: `bd dep add <task> <depends-on>`
@@ -323,7 +323,7 @@ A `/prd` command execution is successful when:
 - ✅ Feature is well-defined in a single PRD
 - ✅ You want full automation (analysis → implementation → commit)
 - ✅ You trust the multi-agent system
-- ✅ Feature fits the spending-tracker architecture
+- ✅ Feature fits the {project} architecture
 
 **Use manual workflow when:**
 - ❌ PRD is vague or needs refinement

@@ -1,15 +1,15 @@
 ---
 name: frontend-dev
-description: Next.js/React/TypeScript frontend development specialist for spending-tracker
+description: Next.js/React/TypeScript frontend development specialist
 version: 1.0.0
 author: msanssouci
 tags: [frontend, nextjs, react, typescript, tailwind, jest, playwright]
 dependencies:
   - beads-workflow
 references:
-  - path: /Users/msanssouci/.config/opencode/stacks/frontend.md
+  - path: ~/.config/opencode/stacks/frontend.md
     type: documentation
-  - path: /Users/msanssouci/.config/opencode/stacks/examples/frontend-workflows.md
+  - path: ~/.config/opencode/stacks/examples/frontend-workflows.md
     type: examples
 commands:
   dev: just run-web
@@ -22,7 +22,7 @@ commands:
 
 ## 🎯 Overview
 
-Specialized agent for Next.js/React/TypeScript development in the spending-tracker project.
+Specialized agent for Next.js/React/TypeScript development.
 
 **You are an expert frontend developer** with deep knowledge of:
 - Next.js 15 with App Router
@@ -38,14 +38,14 @@ Specialized agent for Next.js/React/TypeScript development in the spending-track
 
 **CRITICAL: Read these files FIRST before implementing any task:**
 
-1. **Base Documentation:** `/Users/msanssouci/.config/opencode/stacks/frontend.md`
+1. **Base Documentation:** `~/.config/opencode/stacks/frontend.md`
    - TypeScript conventions (2 spaces, no semicolons)
    - File organization (components, lib, types)
    - React best practices (DRY, state management)
    - Testing requirements (Jest + Playwright)
    - Accessibility requirements
 
-2. **Workflow Examples:** `/Users/msanssouci/.config/opencode/stacks/examples/frontend-workflows.md`
+2. **Workflow Examples:** `~/.config/opencode/stacks/examples/frontend-workflows.md`
    - Creating React components
    - Adding API client methods
    - Implementing pages with E2E tests
@@ -193,13 +193,13 @@ Apply these React patterns appropriately:
 You will be invoked by the build-orchestrator with a beads task ID:
 
 ```
-Load skill 'frontend-dev' and implement beads task spending-tracker-XXX
+Load skill 'frontend-dev' and implement beads task {project}-XXX
 ```
 
 **First actions:**
 ```bash
 # 1. Show task details
-bd show spending-tracker-XXX --json
+bd show {project}-XXX --json
 
 # 2. Read project documentation
 # - Read ~/.config/opencode/stacks/frontend.md
@@ -207,7 +207,7 @@ bd show spending-tracker-XXX --json
 # - Understand patterns and conventions
 
 # 3. Claim the task
-bd update spending-tracker-XXX --status=in_progress --json
+bd update {project}-XXX --status=in_progress --json
 ```
 
 ### Step 2: Analyze Requirements
@@ -700,10 +700,10 @@ just test-e2e-ui
 
 ```bash
 # Update task status
-bd update spending-tracker-XXX --status=in_review --json
+bd update {project}-XXX --status=in_review --json
 
 # Add implementation notes
-bd update spending-tracker-XXX \
+bd update {project}-XXX \
   --notes="Implemented AccountList and AccountForm components with full test coverage. Files:
 - apps/web/src/types/account.ts
 - apps/web/src/lib/api/accounts.ts
@@ -841,16 +841,16 @@ When encountering errors:
 4. **Blocked by Dependencies:**
    ```bash
    # Check dependencies
-   bd show spending-tracker-XXX --json
+   bd show {project}-XXX --json
    
    # If blocked, report back to orchestrator
    ```
 
 ## 📚 Additional Resources
 
-- **Code Templates:** See `/Users/msanssouci/.config/opencode/skills/frontend-dev/templates/`
-- **Checklists:** See `/Users/msanssouci/.config/opencode/skills/frontend-dev/checklists/`
-- **Patterns:** See `/Users/msanssouci/.config/opencode/skills/frontend-dev/patterns/`
+- **Code Templates:** See `~/.config/opencode/skills/frontend-dev/templates/`
+- **Checklists:** See `~/.config/opencode/skills/frontend-dev/checklists/`
+- **Patterns:** See `~/.config/opencode/skills/frontend-dev/patterns/`
 
 ## 🎯 Success Criteria
 

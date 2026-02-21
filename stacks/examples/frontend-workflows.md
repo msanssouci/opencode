@@ -20,22 +20,22 @@ Build `TransactionList` component to display spending transactions in a table.
 ```bash
 # Create component task
 bd create --title="Create TransactionList component" --type=task --priority=2 --json
-# Returns: spending-tracker-300
+# Returns: {project}-300
 
 # Create test task
 bd create --title="Write Jest tests for TransactionList" --type=task --priority=2 --json
-# Returns: spending-tracker-301
+# Returns: {project}-301
 
 # Create E2E task
 bd create --title="Add E2E test for transactions page" --type=task --priority=2 --json
-# Returns: spending-tracker-302
+# Returns: {project}-302
 
 # Set dependencies
-bd dep add spending-tracker-301 spending-tracker-300 --json  # Unit tests depend on component
-bd dep add spending-tracker-302 spending-tracker-301 --json  # E2E depends on unit tests
+bd dep add {project}-301 {project}-300 --json  # Unit tests depend on component
+bd dep add {project}-302 {project}-301 --json  # E2E depends on unit tests
 
 # Start work
-bd update spending-tracker-300 --status=in_progress --json
+bd update {project}-300 --status=in_progress --json
 ```
 
 ### Implementation Steps
@@ -105,13 +105,13 @@ just run-web
 
 ### Close Component Task
 ```bash
-bd close spending-tracker-300 --reason="Created TransactionList component with loading/empty states in apps/web/src/components/features/TransactionList.tsx" --json
+bd close {project}-300 --reason="Created TransactionList component with loading/empty states in apps/web/src/components/features/TransactionList.tsx" --json
 ```
 
 ### Write Jest Tests
 ```bash
-bd ready --json  # Shows spending-tracker-301
-bd update spending-tracker-301 --status=in_progress --json
+bd ready --json  # Shows {project}-301
+bd update {project}-301 --status=in_progress --json
 ```
 
 **4. Add unit tests**
@@ -171,13 +171,13 @@ just test-web
 
 ### Close Test Task
 ```bash
-bd close spending-tracker-301 --reason="Added Jest tests for TransactionList with 100% coverage in apps/web/__tests__/unit/components/features/TransactionList.test.tsx" --json
+bd close {project}-301 --reason="Added Jest tests for TransactionList with 100% coverage in apps/web/__tests__/unit/components/features/TransactionList.test.tsx" --json
 ```
 
 ### Write E2E Test
 ```bash
-bd ready --json  # Shows spending-tracker-302
-bd update spending-tracker-302 --status=in_progress --json
+bd ready --json  # Shows {project}-302
+bd update {project}-302 --status=in_progress --json
 ```
 
 **6. Create page object**
@@ -251,7 +251,7 @@ just test-e2e
 
 ### Close E2E Task
 ```bash
-bd close spending-tracker-302 --reason="Added Playwright E2E tests for transactions page with page object model and accessibility checks in apps/web/tests/e2e/transactions.spec.ts" --json
+bd close {project}-302 --reason="Added Playwright E2E tests for transactions page with page object model and accessibility checks in apps/web/tests/e2e/transactions.spec.ts" --json
 ```
 
 ---
@@ -265,17 +265,17 @@ Add `transactions.create()` method to API client for creating new transactions.
 ```bash
 # Create implementation task
 bd create --title="Add transactions.create() API method" --type=task --priority=2 --json
-# Returns: spending-tracker-310
+# Returns: {project}-310
 
 # Create test task
 bd create --title="Mock transactions API in tests" --type=task --priority=2 --json
-# Returns: spending-tracker-311
+# Returns: {project}-311
 
 # Set dependency
-bd dep add spending-tracker-311 spending-tracker-310 --json
+bd dep add {project}-311 {project}-310 --json
 
 # Start work
-bd update spending-tracker-310 --status=in_progress --json
+bd update {project}-310 --status=in_progress --json
 ```
 
 ### Implementation Steps
@@ -341,12 +341,12 @@ console.log(newTx)
 
 ### Close Implementation Task
 ```bash
-bd close spending-tracker-310 --reason="Added transactions.create() API method with typed request/response in apps/web/src/lib/api/transactions.ts" --json
+bd close {project}-310 --reason="Added transactions.create() API method with typed request/response in apps/web/src/lib/api/transactions.ts" --json
 ```
 
 ### Write Tests
 ```bash
-bd update spending-tracker-311 --status=in_progress --json
+bd update {project}-311 --status=in_progress --json
 ```
 
 **4. Add test with mocks**
@@ -412,7 +412,7 @@ just test-web
 
 ### Close Test Task
 ```bash
-bd close spending-tracker-311 --reason="Added Jest tests with API mocks for transactions client, 100% coverage in apps/web/__tests__/unit/lib/api/transactions.test.ts" --json
+bd close {project}-311 --reason="Added Jest tests with API mocks for transactions client, 100% coverage in apps/web/__tests__/unit/lib/api/transactions.test.ts" --json
 ```
 
 ---
@@ -426,17 +426,17 @@ Create `/transactions` page that displays the transaction list with loading/erro
 ```bash
 # Create page implementation task
 bd create --title="Implement /transactions page" --type=feature --priority=2 --json
-# Returns: spending-tracker-320
+# Returns: {project}-320
 
 # Create loading/error states task
 bd create --title="Add loading/error states to transactions page" --type=task --priority=2 --json
-# Returns: spending-tracker-321
+# Returns: {project}-321
 
 # Set dependency
-bd dep add spending-tracker-321 spending-tracker-320 --json
+bd dep add {project}-321 {project}-320 --json
 
 # Start work
-bd update spending-tracker-320 --status=in_progress --json
+bd update {project}-320 --status=in_progress --json
 ```
 
 ### Implementation Steps
@@ -473,12 +473,12 @@ just run-web
 
 ### Close Page Task
 ```bash
-bd close spending-tracker-320 --reason="Implemented /transactions page with Suspense loading in apps/web/src/app/transactions/page.tsx" --json
+bd close {project}-320 --reason="Implemented /transactions page with Suspense loading in apps/web/src/app/transactions/page.tsx" --json
 ```
 
 ### Add Error Handling
 ```bash
-bd update spending-tracker-321 --status=in_progress --json
+bd update {project}-321 --status=in_progress --json
 ```
 
 **3. Create error boundary**
@@ -539,7 +539,7 @@ export default function TransactionsLoading() {
 
 ### Close Error Handling Task
 ```bash
-bd close spending-tracker-321 --reason="Added error boundary and loading state for transactions page in apps/web/src/app/transactions/error.tsx and loading.tsx" --json
+bd close {project}-321 --reason="Added error boundary and loading state for transactions page in apps/web/src/app/transactions/error.tsx and loading.tsx" --json
 ```
 
 ---

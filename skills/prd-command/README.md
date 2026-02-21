@@ -2,23 +2,36 @@
 
 **Single-command PRD-to-implementation workflow**
 
+## 🚀 Command Now Available!
+
+The `/prd` command is now installed as a custom OpenCode command. You can use it directly in any OpenCode session!
+
 ## Quick Start
 
 ```bash
 /prd "Your feature description here"
 ```
 
-That's it! The system will:
+The workflow:
 1. ✅ Analyze your PRD
 2. ✅ Create beads tasks with dependencies
-3. ✅ Implement in parallel (3-4x faster)
-4. ✅ Run all tests
-5. ✅ Commit when done
-6. ✅ Report completion
+3. 🚨 **CHECKPOINT** - Review and approve task plan
+4. ✅ Implement in parallel (3-4x faster)
+5. ✅ Run all tests
+6. ✅ Commit when done
+7. ✅ Report completion
+
+## Installation
+
+The command is installed at:
+- `~/.config/opencode/commands/prd.md` - Main command
+- `~/.config/opencode/commands/prd-continue.md` - Resume after modifications
+
+No additional setup needed! Just run `/prd` in OpenCode.
 
 ## What It Does
 
-The `/prd` command automates the entire multi-agent workflow:
+The `/prd` command automates the entire multi-agent workflow with an approval checkpoint:
 
 **Traditional Approach (Manual):**
 ```bash
@@ -35,10 +48,22 @@ just test-all
 git commit -m "..."
 ```
 
-**With `/prd` Command (Automated):**
+**With `/prd` Command (Semi-Automated):**
 ```bash
 /prd "Feature description"
-# Everything happens automatically
+
+# Phase 1: Planning (automatic)
+# - Analyzes PRD
+# - Creates epic + tasks
+# - Shows breakdown
+
+# 🚨 CHECKPOINT: You review and approve
+
+# Phase 2: Implementation (automatic)
+# - Executes in parallel batches
+# - Runs tests after each batch
+# - Commits when complete
+
 # Done in 30-60 minutes with parallel execution
 ```
 
@@ -100,7 +125,7 @@ See [examples.md](examples.md) for more detailed examples.
 - ✅ Docker running (`just docker-up`)
 - ✅ Dependencies installed (`npm install` in apps/web)
 - ✅ Beads initialized (`bd ready`)
-- ✅ spending-tracker project
+- ✅ {project} project
 
 ## Tips for Good PRDs
 
@@ -145,9 +170,11 @@ PUT /api/tasks/:id, DELETE /api/tasks/:id"
 
 ## Files
 
-- `SKILL.md` - Main skill documentation (detailed workflow)
+- `SKILL.md` - Original skill documentation (detailed workflow reference)
 - `examples.md` - Example PRDs with expected results
 - `README.md` - This file (quick reference)
+- `~/.config/opencode/commands/prd.md` - **Actual executable command** ⭐
+- `~/.config/opencode/commands/prd-continue.md` - Resume command
 
 ## Related Skills
 

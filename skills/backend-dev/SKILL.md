@@ -1,15 +1,15 @@
 ---
 name: backend-dev
-description: Spring Boot/Kotlin backend development specialist for spending-tracker
+description: Spring Boot/Kotlin backend development specialist
 version: 1.0.0
 author: msanssouci
 tags: [backend, kotlin, spring-boot, gradle, kotest, jooq, postgres]
 dependencies:
   - beads-workflow
 references:
-  - path: /Users/msanssouci/.config/opencode/stacks/backend.md
+  - path: ~/.config/opencode/stacks/backend.md
     type: documentation
-  - path: /Users/msanssouci/.config/opencode/stacks/examples/backend-workflows.md
+  - path: ~/.config/opencode/stacks/examples/backend-workflows.md
     type: examples
 commands:
   build: just build
@@ -21,7 +21,7 @@ commands:
 
 ## 🎯 Overview
 
-Specialized agent for Spring Boot/Kotlin/Gradle development in the spending-tracker project.
+Specialized agent for Spring Boot/Kotlin/Gradle development.
 
 **You are an expert backend developer** with deep knowledge of:
 - Spring Boot 3.x REST APIs
@@ -37,13 +37,13 @@ Specialized agent for Spring Boot/Kotlin/Gradle development in the spending-trac
 
 **CRITICAL: Read these files FIRST before implementing any task:**
 
-1. **Base Documentation:** `/Users/msanssouci/.config/opencode/stacks/backend.md`
+1. **Base Documentation:** `~/.config/opencode/stacks/backend.md`
    - Code style guidelines (4 spaces, naming conventions)
    - Build commands (Gradle + justfile)
    - Testing patterns (Kotest, given-when-then)
    - Beads integration points
 
-2. **Workflow Examples:** `/Users/msanssouci/.config/opencode/stacks/examples/backend-workflows.md`
+2. **Workflow Examples:** `~/.config/opencode/stacks/examples/backend-workflows.md`
    - Adding Spring Boot REST endpoints
    - Implementing Clikt CLI commands
    - Adding shared utilities
@@ -179,13 +179,13 @@ Apply these patterns appropriately:
 You will be invoked by the build-orchestrator with a beads task ID:
 
 ```
-Load skill 'backend-dev' and implement beads task spending-tracker-XXX
+Load skill 'backend-dev' and implement beads task {project}-XXX
 ```
 
 **First actions:**
 ```bash
 # 1. Show task details
-bd show spending-tracker-XXX --json
+bd show {project}-XXX --json
 
 # 2. Read project documentation
 # - Read ~/.config/opencode/stacks/backend.md
@@ -193,7 +193,7 @@ bd show spending-tracker-XXX --json
 # - Understand patterns and conventions
 
 # 3. Claim the task
-bd update spending-tracker-XXX --status=in_progress --json
+bd update {project}-XXX --status=in_progress --json
 ```
 
 ### Step 2: Analyze Requirements
@@ -500,10 +500,10 @@ just test
 
 ```bash
 # Update task status
-bd update spending-tracker-XXX --status=in_review --json
+bd update {project}-XXX --status=in_review --json
 
 # Add implementation notes
-bd update spending-tracker-XXX \
+bd update {project}-XXX \
   --notes="Implemented AccountController, AccountService, AccountRepository with full test coverage. Files:
 - apps/api/src/main/kotlin/.../controller/AccountController.kt
 - apps/api/src/main/kotlin/.../service/AccountService.kt
@@ -589,7 +589,7 @@ When encountering errors:
 3. **Blocked by Dependencies:**
    ```bash
    # Check dependencies
-   bd show spending-tracker-XXX --json
+   bd show {project}-XXX --json
    
    # If blocked, report back to orchestrator
    # Do NOT implement until blockers resolved
@@ -621,9 +621,9 @@ Before marking task as `in_review`:
 
 ## 📚 Additional Resources
 
-- **Code Templates:** See `/Users/msanssouci/.config/opencode/skills/backend-dev/templates/`
-- **Checklists:** See `/Users/msanssouci/.config/opencode/skills/backend-dev/checklists/`
-- **Design Patterns:** See `/Users/msanssouci/.config/opencode/skills/backend-dev/patterns/`
+- **Code Templates:** See `~/.config/opencode/skills/backend-dev/templates/`
+- **Checklists:** See `~/.config/opencode/skills/backend-dev/checklists/`
+- **Design Patterns:** See `~/.config/opencode/skills/backend-dev/patterns/`
 
 ## 🎯 Success Criteria
 

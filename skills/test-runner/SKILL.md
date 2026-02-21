@@ -1,6 +1,6 @@
 ---
 name: test-runner
-description: Test execution and failure management for spending-tracker project
+description: Test execution and failure management for {project} project
 version: 1.0.0
 author: msanssouci
 tags: [testing, kotest, jest, playwright, ci]
@@ -17,7 +17,7 @@ commands:
 
 ## 🎯 Overview
 
-Specialized agent for executing tests and managing failure resolution in the spending-tracker project.
+Specialized agent for executing tests and managing failure resolution in the {project} project.
 
 **You are an expert test engineer** responsible for:
 - Detecting appropriate test framework
@@ -63,13 +63,13 @@ Specialized agent for executing tests and managing failure resolution in the spe
 You will be invoked by the build-orchestrator when a task reaches `ready_for_test` status:
 
 ```
-Load skill 'test-runner' and test beads task spending-tracker-XXX
+Load skill 'test-runner' and test beads task {project}-XXX
 ```
 
 **First actions:**
 ```bash
 # 1. Show task details
-bd show spending-tracker-XXX --json
+bd show {project}-XXX --json
 
 # 2. Extract task metadata
 # - tags: backend, frontend, web, e2e, testing
@@ -137,10 +137,10 @@ If all tests pass (exit code 0):
 
 ```bash
 # Update task status
-bd update spending-tracker-XXX --status=done --json
+bd update {project}-XXX --status=done --json
 
 # Close task with details
-bd close spending-tracker-XXX --reason="All tests passing. Test output:
+bd close {project}-XXX --reason="All tests passing. Test output:
 Backend: X tests passed
 Frontend: Y tests passed
 E2E: Z tests passed" --json
@@ -292,10 +292,10 @@ bd create \
   --tags=backend,test-failure \
   --json
 
-# Returns: spending-tracker-XXX
+# Returns: {project}-XXX
 
 # Add detailed description
-bd update spending-tracker-XXX \
+bd update {project}-XXX \
   --description="Test failure in apps/api/src/test/kotlin/.../AccountServiceTest.kt:67
 
 Test: should validate negative amounts
@@ -314,7 +314,7 @@ Reference: apps/api/src/main/kotlin/.../service/AccountService.kt" \
   --json
 
 # Link to original task
-bd dep add spending-tracker-XXX spending-tracker-ORIGINAL --json
+bd dep add {project}-XXX {project}-ORIGINAL --json
 ```
 
 ### Step 8: Manage Retry Logic
@@ -381,10 +381,10 @@ Please review and fix manually.`
 
 ```bash
 # For backend test failures
-Load skill 'backend-dev' and fix beads issue spending-tracker-XXX
+Load skill 'backend-dev' and fix beads issue {project}-XXX
 
 # For frontend test failures
-Load skill 'frontend-dev' and fix beads issue spending-tracker-XXX
+Load skill 'frontend-dev' and fix beads issue {project}-XXX
 ```
 
 ### Step 10: Re-run Tests After Fix
@@ -396,7 +396,7 @@ When fix task is completed:
 just test          # or just test-web, just test-e2e
 
 # If tests now pass:
-bd close spending-tracker-ORIGINAL --reason="Tests passing after fix" --json
+bd close {project}-ORIGINAL --reason="Tests passing after fix" --json
 
 # If tests still fail:
 # Increment retry count and repeat or escalate
@@ -611,7 +611,7 @@ E2E Tests (Playwright):
   - Duration: 24.1s
 
 Overall: 95 tests passed
-Task spending-tracker-XXX marked as DONE
+Task {project}-XXX marked as DONE
 ```
 
 ### Failure Report
@@ -627,7 +627,7 @@ Backend Tests (Kotest):
   Failures:
   1. AccountServiceTest.should validate negative amounts
      File: AccountServiceTest.kt:67
-     Fix task created: spending-tracker-510
+     Fix task created: {project}-510
 
 Frontend Unit Tests (Jest):
   - Total: 38 tests
@@ -638,7 +638,7 @@ Frontend Unit Tests (Jest):
   Failures:
   1. AccountForm › submits form with valid data
      File: AccountForm.test.tsx:47
-     Fix task created: spending-tracker-511
+     Fix task created: {project}-511
 
 Retry count: 1/3
 Fix tasks routed to backend-dev and frontend-dev subagents
@@ -648,7 +648,7 @@ Fix tasks routed to backend-dev and frontend-dev subagents
 ```
 Test Results: 🚨 ESCALATED TO USER
 
-Task: spending-tracker-500
+Task: {project}-500
 Retry count: 3/3 (MAX REACHED)
 
 Persistent failures after 3 retry attempts:

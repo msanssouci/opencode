@@ -1,6 +1,6 @@
 ---
 name: prd-planner
-description: Analyzes PRDs and creates beads task breakdown for multi-agent implementation in spending-tracker
+description: Analyzes PRDs and creates beads task breakdown for multi-agent implementation
 version: 1.0.0
 author: msanssouci
 tags: [planning, prd, task-breakdown, requirements]
@@ -27,7 +27,7 @@ Your responsibilities:
 
 ### Project Architecture
 
-**spending-tracker** is a monorepo with:
+**{project}** is a monorepo with:
 
 **Backend:**
 - Spring Boot 3.x REST API (`apps/api/`)
@@ -51,27 +51,27 @@ Your responsibilities:
 
 **CRITICAL: Read these before planning:**
 
-1. **Backend Patterns:** `/Users/msanssouci/.config/opencode/stacks/backend.md`
+1. **Backend Patterns:** `~/.config/opencode/stacks/backend.md`
    - Repository → Service → Controller architecture
    - Testing patterns (Kotest)
    - Build commands
 
-2. **Frontend Patterns:** `/Users/msanssouci/.config/opencode/stacks/frontend.md`
+2. **Frontend Patterns:** `~/.config/opencode/stacks/frontend.md`
    - Component structure
    - Testing patterns (Jest + Playwright)
    - Build commands
 
-3. **Backend Workflows:** `/Users/msanssouci/.config/opencode/stacks/examples/backend-workflows.md`
+3. **Backend Workflows:** `~/.config/opencode/stacks/examples/backend-workflows.md`
    - How to add REST endpoints
    - How to add CLI commands
 
-4. **Frontend Workflows:** `/Users/msanssouci/.config/opencode/stacks/examples/frontend-workflows.md`
+4. **Frontend Workflows:** `~/.config/opencode/stacks/examples/frontend-workflows.md`
    - How to create components
    - How to add API clients
 
 ### Task Prefix
 
-All beads tasks use prefix: `spending-tracker-XXX`
+All beads tasks use prefix: `{project}-XXX`
 
 ### Available Tags
 
@@ -184,7 +184,7 @@ bd create \
   --priority=2 \
   --json
 
-# Returns: spending-tracker-500
+# Returns: {project}-500
 
 # Backend Tasks
 
@@ -204,7 +204,7 @@ bd create \
 Create accounts table in PostgreSQL with proper indexes." \
   --json
 
-# Returns: spending-tracker-501
+# Returns: {project}-501
 
 bd create \
   --title="Backend: Create AccountRepository interface" \
@@ -221,7 +221,7 @@ bd create \
 Use JOOQ for type-safe queries." \
   --json
 
-# Returns: spending-tracker-502
+# Returns: {project}-502
 
 bd create \
   --title="Backend: Create AccountService with CRUD methods" \
@@ -241,7 +241,7 @@ Include validation:
 - userId must exist" \
   --json
 
-# Returns: spending-tracker-503
+# Returns: {project}-503
 
 bd create \
   --title="Backend: Create AccountController REST endpoints" \
@@ -259,7 +259,7 @@ Use @Valid for input validation
 Return appropriate HTTP status codes" \
   --json
 
-# Returns: spending-tracker-504
+# Returns: {project}-504
 
 bd create \
   --title="Backend: Write Kotest tests for AccountService" \
@@ -276,7 +276,7 @@ Use MockK for repository mocking
 Create test fixtures for reusable data" \
   --json
 
-# Returns: spending-tracker-505
+# Returns: {project}-505
 
 # Frontend Tasks
 
@@ -307,7 +307,7 @@ interface UpdateAccountRequest {
 }" \
   --json
 
-# Returns: spending-tracker-506
+# Returns: {project}-506
 
 bd create \
   --title="Frontend: Create Account API client methods" \
@@ -326,7 +326,7 @@ Use fetchApi helper from lib/api/client.ts
 Handle errors with ApiError" \
   --json
 
-# Returns: spending-tracker-507
+# Returns: {project}-507
 
 bd create \
   --title="Frontend: Create AccountList component" \
@@ -348,7 +348,7 @@ Tailwind CSS styling
 Dark mode support" \
   --json
 
-# Returns: spending-tracker-508
+# Returns: {project}-508
 
 bd create \
   --title="Frontend: Create AccountForm component" \
@@ -370,7 +370,7 @@ Accessibility: labels, aria-invalid, aria-describedby
 Validation before submit" \
   --json
 
-# Returns: spending-tracker-509
+# Returns: {project}-509
 
 bd create \
   --title="Frontend: Create /accounts page" \
@@ -388,7 +388,7 @@ Features:
 Server Component for data fetching" \
   --json
 
-# Returns: spending-tracker-510
+# Returns: {project}-510
 
 bd create \
   --title="Frontend: Write Jest tests for Account components" \
@@ -414,7 +414,7 @@ Mock API calls
 Use React Testing Library" \
   --json
 
-# Returns: spending-tracker-511
+# Returns: {project}-511
 
 bd create \
   --title="Frontend: Write E2E test for account CRUD flow" \
@@ -436,7 +436,7 @@ Use Page Object Model pattern
 Include accessibility check with @axe-core/playwright" \
   --json
 
-# Returns: spending-tracker-512
+# Returns: {project}-512
 ```
 
 ### Step 5: Set Dependencies
@@ -445,23 +445,23 @@ Establish task dependencies using `bd dep add`:
 
 ```bash
 # Backend dependencies
-bd dep add spending-tracker-502 spending-tracker-501 --json  # Repo depends on Entity
-bd dep add spending-tracker-503 spending-tracker-502 --json  # Service depends on Repo
-bd dep add spending-tracker-504 spending-tracker-503 --json  # Controller depends on Service
-bd dep add spending-tracker-505 spending-tracker-504 --json  # Tests depend on Controller
+bd dep add {project}-502 {project}-501 --json  # Repo depends on Entity
+bd dep add {project}-503 {project}-502 --json  # Service depends on Repo
+bd dep add {project}-504 {project}-503 --json  # Controller depends on Service
+bd dep add {project}-505 {project}-504 --json  # Tests depend on Controller
 
 # Frontend dependencies
-bd dep add spending-tracker-507 spending-tracker-506 --json  # API client depends on Types
-bd dep add spending-tracker-508 spending-tracker-507 --json  # List depends on API client
-bd dep add spending-tracker-509 spending-tracker-507 --json  # Form depends on API client
-bd dep add spending-tracker-510 spending-tracker-507 --json  # Page depends on API client
-bd dep add spending-tracker-511 spending-tracker-508 --json  # Unit tests depend on components
-bd dep add spending-tracker-511 spending-tracker-509 --json
-bd dep add spending-tracker-512 spending-tracker-511 --json  # E2E depends on unit tests
+bd dep add {project}-507 {project}-506 --json  # API client depends on Types
+bd dep add {project}-508 {project}-507 --json  # List depends on API client
+bd dep add {project}-509 {project}-507 --json  # Form depends on API client
+bd dep add {project}-510 {project}-507 --json  # Page depends on API client
+bd dep add {project}-511 {project}-508 --json  # Unit tests depend on components
+bd dep add {project}-511 {project}-509 --json
+bd dep add {project}-512 {project}-511 --json  # E2E depends on unit tests
 
 # Cross-stack dependency (optional)
 # Frontend can start once backend types are defined
-bd dep add spending-tracker-506 spending-tracker-504 --json  # Frontend types depend on backend DTOs
+bd dep add {project}-506 {project}-504 --json  # Frontend types depend on backend DTOs
 ```
 
 ### Step 6: Verify Task Structure
@@ -474,7 +474,7 @@ bd list --status=pending --json
 bd ready --json
 
 # Verify dependencies
-bd show spending-tracker-503 --json | jq '.dependencies'
+bd show {project}-503 --json | jq '.dependencies'
 ```
 
 ### Step 7: Invoke Build Orchestrator
@@ -486,7 +486,7 @@ Load skill 'build-orchestrator' and coordinate implementation of the account man
 ```
 
 **Pass context:**
-- Task range: spending-tracker-500 to spending-tracker-512
+- Task range: {project}-500 to {project}-512
 - Total tasks: 13 (1 epic + 12 implementation tasks)
 - Expected parallel execution: Backend and frontend can run concurrently
 
@@ -621,28 +621,28 @@ The expense list should paginate (20 per page) and be sortable by date.
 
 **Task Breakdown:**
 ```
-Epic: Expense Tracking Feature (spending-tracker-600)
+Epic: Expense Tracking Feature ({project}-600)
 
 Backend (7 tasks):
-1. spending-tracker-601: Create Expense entity and table schema
-2. spending-tracker-602: Create ExpenseRepository with pagination
-3. spending-tracker-603: Create ExpenseService with CRUD + filtering
-4. spending-tracker-604: Create ExpenseController with REST endpoints
-5. spending-tracker-605: Create expense DTOs (CreateExpenseRequest, etc.)
-6. spending-tracker-606: Create CategoryEnum or Category entity
-7. spending-tracker-607: Write Kotest tests for ExpenseService
+1. {project}-601: Create Expense entity and table schema
+2. {project}-602: Create ExpenseRepository with pagination
+3. {project}-603: Create ExpenseService with CRUD + filtering
+4. {project}-604: Create ExpenseController with REST endpoints
+5. {project}-605: Create expense DTOs (CreateExpenseRequest, etc.)
+6. {project}-606: Create CategoryEnum or Category entity
+7. {project}-607: Write Kotest tests for ExpenseService
 
 Frontend (6 tasks):
-8. spending-tracker-608: Create Expense TypeScript types
-9. spending-tracker-609: Create Expense API client methods
-10. spending-tracker-610: Create ExpenseList component with pagination
-11. spending-tracker-611: Create ExpenseForm component
-12. spending-tracker-612: Create ExpenseFilters component (date, category)
-13. spending-tracker-613: Create /accounts/[id]/expenses page
+8. {project}-608: Create Expense TypeScript types
+9. {project}-609: Create Expense API client methods
+10. {project}-610: Create ExpenseList component with pagination
+11. {project}-611: Create ExpenseForm component
+12. {project}-612: Create ExpenseFilters component (date, category)
+13. {project}-613: Create /accounts/[id]/expenses page
 
 Testing (2 tasks):
-14. spending-tracker-614: Write Jest tests for Expense components
-15. spending-tracker-615: Write E2E test for expense CRUD flow
+14. {project}-614: Write Jest tests for Expense components
+15. {project}-615: Write E2E test for expense CRUD flow
 
 Total: 15 tasks + 1 epic = 16 beads issues
 ```

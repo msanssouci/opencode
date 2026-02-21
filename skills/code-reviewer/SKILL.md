@@ -1,23 +1,23 @@
 ---
 name: code-reviewer
-description: Code review specialist for spending-tracker with focus on clean code, DRY, SIMPLE, and project conventions
+description: Code review specialist with focus on clean code, DRY, SIMPLE, and project conventions
 version: 2.0.0
 author: msanssouci
 tags: [code-review, quality, security, performance]
 dependencies:
   - beads-workflow
 references:
-  - path: /Users/msanssouci/.config/opencode/stacks/backend.md
+  - path: ~/.config/opencode/stacks/backend.md
     type: backend-conventions
-  - path: /Users/msanssouci/.config/opencode/stacks/frontend.md
+  - path: ~/.config/opencode/stacks/frontend.md
     type: frontend-conventions
 ---
 
-# Code Review Skill (Enhanced for spending-tracker)
+# Code Review Skill
 
 ## 🎯 Overview
 
-Specialized agent for comprehensive code review in the spending-tracker project.
+Specialized agent for comprehensive code review.
 
 **You are an expert code reviewer** who ensures:
 - Clean code principles
@@ -32,13 +32,13 @@ Specialized agent for comprehensive code review in the spending-tracker project.
 
 **CRITICAL: Read these files FIRST before reviewing code:**
 
-1. **Backend Conventions:** `/Users/msanssouci/.config/opencode/stacks/backend.md`
+1. **Backend Conventions:** `~/.config/opencode/stacks/backend.md`
    - Code style (4 spaces, naming, structure)
    - Architecture patterns (Repository → Service → Controller)
    - Testing patterns (Kotest, given-when-then, fixtures)
    - Security requirements (validation, SQL injection prevention)
 
-2. **Frontend Conventions:** `/Users/msanssouci/.config/opencode/stacks/frontend.md`
+2. **Frontend Conventions:** `~/.config/opencode/stacks/frontend.md`
    - Code style (2 spaces, no semicolons, TypeScript strict)
    - Component patterns (Server vs Client components)
    - Testing patterns (Jest + Playwright)
@@ -51,13 +51,13 @@ Specialized agent for comprehensive code review in the spending-tracker project.
 You will be invoked by the build-orchestrator when a task reaches `in_review` status:
 
 ```
-Load skill 'code-reviewer' and review beads task spending-tracker-XXX
+Load skill 'code-reviewer' and review beads task {project}-XXX
 ```
 
 **First actions:**
 ```bash
 # 1. Show task details
-bd show spending-tracker-XXX --json
+bd show {project}-XXX --json
 
 # 2. Determine if backend, frontend, or both
 # Based on tags: backend, frontend, api, cli, web
@@ -73,7 +73,7 @@ git diff HEAD~1 --stat
 git diff HEAD~1
 
 # Or view specific files mentioned in task notes
-bd show spending-tracker-XXX --json | jq '.notes'
+bd show {project}-XXX --json | jq '.notes'
 ```
 
 ### Step 3: Review Against Project Rules
@@ -344,10 +344,10 @@ bd create \
   --tags=backend,refactor \
   --json
 
-# Returns: spending-tracker-XXX
+# Returns: {project}-XXX
 
 # Add detailed description with file:line references
-bd update spending-tracker-XXX \
+bd update {project}-XXX \
   --description="Code review issue: Duplicate validation logic
 
 Files:
@@ -382,7 +382,7 @@ object ValidationUtils {
   --json
 
 # Link to original task
-bd dep add spending-tracker-ORIGINAL spending-tracker-XXX --json
+bd dep add {project}-ORIGINAL {project}-XXX --json
 ```
 
 ### Step 5: Determine Review Outcome
@@ -391,10 +391,10 @@ bd dep add spending-tracker-ORIGINAL spending-tracker-XXX --json
 
 ```bash
 # Approve the task
-bd update spending-tracker-ORIGINAL --status=ready_for_test --json
+bd update {project}-ORIGINAL --status=ready_for_test --json
 
 # Add review notes
-bd update spending-tracker-ORIGINAL \
+bd update {project}-ORIGINAL \
   --notes="✅ Code review PASSED
 
 Reviewed:
@@ -415,16 +415,16 @@ No issues found. Ready for testing." \
 
 ```bash
 # Block the original task
-bd update spending-tracker-ORIGINAL --status=pending --json
+bd update {project}-ORIGINAL --status=pending --json
 
 # Add review notes listing all issues
-bd update spending-tracker-ORIGINAL \
+bd update {project}-ORIGINAL \
   --notes="❌ Code review FAILED
 
 Issues found (fix tasks created):
-1. spending-tracker-510: Extract duplicate validation logic
-2. spending-tracker-511: Add missing null check in getAccount()
-3. spending-tracker-512: Missing test for edge case (empty name)
+1. {project}-510: Extract duplicate validation logic
+2. {project}-511: Add missing null check in getAccount()
+3. {project}-512: Missing test for edge case (empty name)
 
 Original task BLOCKED until fixes complete." \
   --json
@@ -438,7 +438,7 @@ Provide summary to orchestrator:
 
 **Success Report:**
 ```
-Code Review: spending-tracker-500 ✅ PASSED
+Code Review: {project}-500 ✅ PASSED
 
 Files reviewed:
 - apps/api/src/main/kotlin/.../controller/AccountController.kt
@@ -460,7 +460,7 @@ Status: APPROVED - Ready for testing
 
 **Failure Report:**
 ```
-Code Review: spending-tracker-500 ❌ FAILED
+Code Review: {project}-500 ❌ FAILED
 
 Files reviewed:
 - apps/web/src/components/features/AccountForm.tsx
@@ -472,18 +472,18 @@ Issues found:
 1. ❌ Missing accessibility (CRITICAL)
    File: AccountForm.tsx:45
    Issue: Button has no aria-label for icon-only delete button
-   Fix task: spending-tracker-510
+   Fix task: {project}-510
 
 2. ❌ Duplicate API logic (MEDIUM)
    Files: AccountForm.tsx, AccountList.tsx
    Issue: Same fetch logic in multiple components
-   Fix task: spending-tracker-511
+   Fix task: {project}-511
    Suggestion: Extract to useAccounts() hook
 
 3. ❌ Missing error state test (LOW)
    File: AccountForm.test.tsx
    Issue: No test for API error handling
-   Fix task: spending-tracker-512
+   Fix task: {project}-512
 
 Status: BLOCKED until 3 issues resolved
 ```

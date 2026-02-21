@@ -107,7 +107,7 @@ This global configuration works in tandem with project-local documentation to pr
                          │
                          ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│  Project Config (e.g., spending-tracker/)                       │
+│  Project Config (e.g., {project}/)                       │
 │  ┌────────────────────────────────────────────────────────┐    │
 │  │ .agents/AGENTS.md                                       │    │
 │  │ • References global stacks (stacks/backend.md, etc.)   │    │

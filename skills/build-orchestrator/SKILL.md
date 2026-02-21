@@ -1,6 +1,6 @@
 ---
 name: build-orchestrator
-description: Coordinates parallel execution of backend, frontend, code review, and testing subagents for spending-tracker
+description: Coordinates parallel execution of backend, frontend, code review, and testing subagents for {project}
 version: 1.0.0
 author: msanssouci
 tags: [orchestration, coordination, workflow, parallel-execution]
@@ -101,7 +101,7 @@ Example output:
 ```json
 [
   {
-    "id": "spending-tracker-501",
+    "id": "{project}-501",
     "title": "Backend: Add Account entity and repository",
     "status": "pending",
     "type": "task",
@@ -110,7 +110,7 @@ Example output:
     "dependencies": []
   },
   {
-    "id": "spending-tracker-505",
+    "id": "{project}-505",
     "title": "Frontend: Add Account type and API client",
     "status": "pending",
     "type": "task",
@@ -147,22 +147,22 @@ For independent backend and frontend tasks, spawn them in a **SINGLE message** u
 
 Task(
   subagent_type: "general",
-  prompt: "Load skill 'backend-dev' and implement beads task spending-tracker-501"
+  prompt: "Load skill 'backend-dev' and implement beads task {project}-501"
 )
 
 Task(
   subagent_type: "general",
-  prompt: "Load skill 'backend-dev' and implement beads task spending-tracker-502"
+  prompt: "Load skill 'backend-dev' and implement beads task {project}-502"
 )
 
 Task(
   subagent_type: "general",
-  prompt: "Load skill 'frontend-dev' and implement beads task spending-tracker-505"
+  prompt: "Load skill 'frontend-dev' and implement beads task {project}-505"
 )
 
 Task(
   subagent_type: "general",
-  prompt: "Load skill 'frontend-dev' and implement beads task spending-tracker-506"
+  prompt: "Load skill 'frontend-dev' and implement beads task {project}-506"
 )
 
 // All four execute concurrently!
@@ -181,7 +181,7 @@ After subagents complete:
 
 ```bash
 # Check task status
-bd show spending-tracker-501 --json
+bd show {project}-501 --json
 
 # Look for status changes:
 # - in_progress → in_review (code complete, needs review)
@@ -205,12 +205,12 @@ Example parallel code reviews:
 // Spawn multiple code reviews in parallel
 Task(
   subagent_type: "general",
-  prompt: "Load skill 'code-reviewer' and review beads task spending-tracker-501"
+  prompt: "Load skill 'code-reviewer' and review beads task {project}-501"
 )
 
 Task(
   subagent_type: "general",
-  prompt: "Load skill 'code-reviewer' and review beads task spending-tracker-505"
+  prompt: "Load skill 'code-reviewer' and review beads task {project}-505"
 )
 ```
 
@@ -234,7 +234,7 @@ Example:
 ```typescript
 Task(
   subagent_type: "general",
-  prompt: "Load skill 'test-runner' and test beads task spending-tracker-501"
+  prompt: "Load skill 'test-runner' and test beads task {project}-501"
 )
 ```
 
@@ -323,22 +323,22 @@ Build Orchestration Summary
 Tasks Completed: 12/12
 
 Backend Tasks (6):
-✅ spending-tracker-501: Account entity and repository
-✅ spending-tracker-502: AccountService CRUD methods
-✅ spending-tracker-503: AccountController REST endpoints
-✅ spending-tracker-504: Kotest tests for AccountService
-✅ spending-tracker-507: Expense entity and repository
-✅ spending-tracker-508: ExpenseService CRUD methods
+✅ {project}-501: Account entity and repository
+✅ {project}-502: AccountService CRUD methods
+✅ {project}-503: AccountController REST endpoints
+✅ {project}-504: Kotest tests for AccountService
+✅ {project}-507: Expense entity and repository
+✅ {project}-508: ExpenseService CRUD methods
 
 Frontend Tasks (5):
-✅ spending-tracker-505: Account types and API client
-✅ spending-tracker-506: AccountList component
-✅ spending-tracker-509: AccountForm component
-✅ spending-tracker-510: Jest tests for Account components
-✅ spending-tracker-513: E2E test for account CRUD flow
+✅ {project}-505: Account types and API client
+✅ {project}-506: AccountList component
+✅ {project}-509: AccountForm component
+✅ {project}-510: Jest tests for Account components
+✅ {project}-513: E2E test for account CRUD flow
 
 E2E Tasks (1):
-✅ spending-tracker-511: E2E test for complete account flow
+✅ {project}-511: E2E test for complete account flow
 
 Code Reviews: 12 conducted
   - Issues found: 3
@@ -403,14 +403,14 @@ If a subagent fails to complete:
 
 ```bash
 # Check task status
-bd show spending-tracker-XXX --json
+bd show {project}-XXX --json
 
 # If still in_progress after long time:
 # - Create issue for investigation
 # - Move to blocked status
 # - Alert user
 
-bd update spending-tracker-XXX --status=blocked --json
+bd update {project}-XXX --status=blocked --json
 ```
 
 ### Infinite Loop Detection
@@ -515,7 +515,7 @@ Track and report:
 **1. Batch Operations:**
 ```bash
 # Instead of closing tasks one by one:
-bd close spending-tracker-501 spending-tracker-502 spending-tracker-503 --json
+bd close {project}-501 {project}-502 {project}-503 --json
 ```
 
 **2. Filter Queries:**
@@ -570,7 +570,7 @@ bd show <id> --json | jq '.dependencies'
 // Initial state: 10 tasks created by prd-planner
 
 Iteration 1:
-  - Query ready: [spending-tracker-501, 502, 505, 506]
+  - Query ready: [{project}-501, 502, 505, 506]
   - Spawn: backend-dev(501), backend-dev(502), frontend-dev(505), frontend-dev(506)
   - Status: 4 in_progress, 6 pending
 
