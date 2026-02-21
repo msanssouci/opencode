@@ -178,7 +178,80 @@ Key:
 
 ---
 
-_Last updated: 2026-02-21 (Moved tech stacks to global /stacks/ directory for reusability across projects)_
+## 🚀 Using This Config for Your Projects
+
+This configuration is **project-agnostic** and uses `{project}` as a placeholder throughout. Here's how to use it:
+
+### Quick Start: Bootstrap a New Project
+
+Use the `/bootstrap-project` command to automatically set up a project:
+
+```bash
+# In your project directory
+/bootstrap-project
+```
+
+This will:
+1. Initialize beads with your project name
+2. Create `.agents/AGENTS.md` with project-specific config
+3. Set up git hooks for beads
+4. Configure PRD workflow and agent orchestration
+
+### Manual Setup (Alternative)
+
+If you prefer manual setup:
+
+1. **Navigate to your project directory**
+   ```bash
+   cd ~/projects/my-awesome-app
+   ```
+
+2. **Initialize beads with your project name**
+   ```bash
+   bd init my-awesome-app
+   ```
+
+3. **Create project-local config** (optional)
+   ```bash
+   mkdir -p .agents
+   cat > .agents/AGENTS.md <<'EOF'
+   # Project Configuration
+   
+   ## Project Context
+   - **Name:** my-awesome-app
+   - **Beads Prefix:** my-awesome-app
+   - **Stack:** Backend (Kotlin/Spring Boot) + Frontend (Next.js/React)
+   
+   ## Build Commands
+   - Build: `just build`
+   - Test: `just test`
+   - Run: `just run-api` (backend), `just run-web` (frontend)
+   
+   ## Directory Structure
+   - `apps/api/` - Spring Boot backend
+   - `apps/web/` - Next.js frontend
+   - `apps/cli/` - Kotlin CLI tool
+   EOF
+   ```
+
+4. **Start using PRD workflow**
+   ```bash
+   # Create a PRD and let agents build it
+   /prd
+   ```
+
+### Understanding {project} Placeholder
+
+Throughout this config, you'll see `{project}` used in examples:
+- **Beads task IDs:** `{project}-123` → becomes `my-app-123` with your project name
+- **References:** "the {project} is a monorepo" → conceptual placeholder
+- **Commands:** `bd init {project}` → replace with actual project name
+
+The global config remains unchanged—`{project}` helps you understand where customization happens at the project level.
+
+---
+
+_Last updated: 2026-02-21 (Genericized config for project portability)_
 
 ## Landing the Plane (Session Completion)
 

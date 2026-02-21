@@ -8,6 +8,27 @@ Custom commands are markdown files with YAML frontmatter that define multi-step 
 
 ## Available Commands
 
+### Project Setup
+
+**[bootstrap-project.md](bootstrap-project.md)** - Bootstrap Project for PRD Workflow
+- Initializes beads task tracking system
+- Creates project-specific `.agents/AGENTS.md` configuration
+- Sets up git hooks for automatic beads sync
+- Configures PRD workflow and agent orchestration
+- Auto-detects tech stack (backend/frontend/fullstack)
+
+**Usage:**
+```
+/bootstrap-project
+/bootstrap-project my-awesome-app
+/bootstrap-project my-app --stack=fullstack
+```
+
+**Requirements:**
+- Git repository initialized (`git init`)
+- In project root directory
+- Beads CLI (`bd`) installed
+
 ### Product Development Workflow
 
 **[prd.md](prd.md)** - End-to-End PRD Implementation
@@ -25,10 +46,10 @@ Custom commands are markdown files with YAML frontmatter that define multi-step 
 ```
 
 **Requirements:**
-- Beads initialized (`bd ready`)
+- Beads initialized (`bd ready` works)
 - Docker running (`just docker-up`)
 - Clean git working directory
-- {project} project structure
+- Project bootstrapped (use `/bootstrap-project` if not already done)
 
 **[prd-continue.md](prd-continue.md)** - Resume PRD Implementation
 - Resumes implementation after task modifications
