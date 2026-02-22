@@ -2,13 +2,11 @@
 name: beads-workflow
 description: Comprehensive beads task tracking workflows, git branch setup procedures, and troubleshooting guide
 compatibility: opencode
-version: 3.0.0
+version: 3.1.0
 last_updated: 2026-02-21
 changelog:
+  - 3.1.0 (2026-02-21) - Aggressive simplification: removed Pattern 4 (hotfix), consolidated duplicate sections, removed git-setup repetition
   - 3.0.0 (2026-02-21) - Enhanced with detailed content moved from core policy (decision tree, commit patterns, full mistakes list, quick reference cards)
-  - 2.2.0 (2026-02-11) - Updated commit message format to use succinct subject line with Beads Tasks section
-  - 2.1.0 (2026-02-09) - Added decision tree for task creation
-  - 2.0.0 (2026-02-09) - Split from core policy for on-demand loading
 ---
 
 # Beads Workflow - Detailed Guide
@@ -18,7 +16,7 @@ changelog:
 I provide comprehensive, step-by-step workflows for beads task tracking including:
 
 - **Git branch setup procedures** - Three scenarios (default branch, clean feature branch, diverged branch) with decision trees
-- **Workflow patterns** - Simple bug fixes, multi-step features (epics), refactoring, emergency hotfixes
+- **Workflow patterns** - Simple bug fixes, multi-step features (epics), refactoring
 - **Beads + Git integration** - Commit conventions, sync procedures, validation scripts
 - **Stale task recovery** - Four recovery options for interrupted sessions
 - **Technology-specific guidance** - Integration points for backend, frontend, and DevOps work
@@ -410,9 +408,7 @@ A helper script is available at `~/.config/opencode/scripts/git-branch-setup.sh`
 
 ### Pattern 1: Simple Bug Fix
 ```bash
-# 0. Git Branch Setup (infrastructure - not tracked in beads)
-# ⚠️ Complete BEFORE creating beads issue
-# Run: ~/.config/opencode/scripts/git-branch-setup.sh (or follow manual steps above)
+# 0. BEFORE starting: Complete git branch setup (see "Git Branch Setup" section above)
 
 # 1. Create or find beads issue (tracking begins here)
 bd ready --json
@@ -444,9 +440,7 @@ git push
 
 ### Pattern 2: Multi-Step Feature (Epic + Tasks)
 ```bash
-# 0. Git Branch Setup (infrastructure - not tracked in beads)
-# ⚠️ Complete BEFORE creating beads issue
-# Run: ~/.config/opencode/scripts/git-branch-setup.sh (or follow manual steps above)
+# 0. BEFORE starting: Complete git branch setup (see "Git Branch Setup" section above)
 
 # 1. Create epic
 bd create --title="User profile page" --type=feature --priority=2 --json
@@ -514,9 +508,7 @@ git push
 
 ### Pattern 3: Refactoring
 ```bash
-# 0. Git Branch Setup (infrastructure - not tracked in beads)
-# ⚠️ Complete BEFORE creating beads issue
-# Run: ~/.config/opencode/scripts/git-branch-setup.sh (or follow manual steps above)
+# 0. BEFORE starting: Complete git branch setup (see "Git Branch Setup" section above)
 
 # 1. Create scoped task
 bd create --title="Extract validation logic to utility" \
@@ -544,40 +536,6 @@ Centralized validation logic to reduce duplication across controllers.
 Beads Tasks:
 - beads-xxx: Moved validation from 3 controllers to ValidationUtils"
 git push
-```
-
-### Pattern 4: Emergency Hotfix (Fast-Track)
-```bash
-# 0. Git Branch Setup (Modified for Hotfixes)
-# For urgent production fixes:
-# - If on default branch: git checkout -b hotfix/<description>
-# - If on feature branch: Consider if this is the right place for a hotfix
-# - For true emergencies: May work directly on main (document in beads issue!)
-
-# 1. Create high-priority bug
-bd create --title="PROD: Payment processing failing" --type=bug --priority=0 --json
-
-# 2. Immediate claim
-bd update beads-xxx --status=in_progress --json
-
-# 3. Fix and close beads task
-bd close beads-xxx --reason="Fixed race condition in PaymentProcessor.charge()" --json
-
-# 4. Sync beads to JSONL
-bd sync --flush-only
-
-# 5. Commit EVERYTHING together and push immediately
-git add <changed-files> .beads/issues.jsonl .beads/interactions.jsonl
-git commit -m "fix(critical): resolve payment race condition
-
-Added synchronization lock to prevent duplicate charges.
-
-Beads Tasks:
-- beads-xxx: Fixed race condition in PaymentProcessor.charge()"
-git push
-
-# Note: Hotfixes still follow the close → sync → commit pattern,
-# just executed quickly due to urgency
 ```
 
 ---
@@ -713,19 +671,7 @@ Beads Tasks:
 - beads-45: Moved validation from UserController, AuthController, ProfileController to ValidationUtils.kt"
 ```
 
-**Example 5: Emergency Hotfix**
-
-```bash
-git commit -m "fix(critical): resolve payment race condition
-
-Added synchronization lock to prevent duplicate charges in high-concurrency scenarios.
-Production issue affecting 0.5% of transactions.
-
-Beads Tasks:
-- beads-234: Fixed race condition in PaymentProcessor.charge() with ReentrantLock"
-```
-
-**Example 6: Milestone Commit (Multi-Day Feature)**
+**Example 5: Milestone Commit (Multi-Day Feature)**
 
 ```bash
 git commit -m "feat: implement profile API backend (milestone 1)
@@ -820,66 +766,6 @@ git push
 ---
 
 ## Beads + Git Integration (Continued)
-
-### Branch Naming & Tracking
-```bash
-# Create feature branch BEFORE claiming work (part of git branch setup)
-git checkout -b feature/<descriptive-name>
-git push -u origin feature/<descriptive-name>  # Set upstream tracking
-
-# Examples:
-git checkout -b feature/user-profile-api      # For beads-102
-git checkout -b feature/fix-auth-null-check   # For beads-87
-git checkout -b feature/extract-validation    # For beads-45
-
-# Note: Beads ID goes in commits, not branch names
-```
-
-### Commit Message Convention
-
-**CRITICAL:** Follow conventional commit structure with succinct first line.
-
-```bash
-# Do NOT commit after each beads task
-# Follow this order: Close tasks → Sync beads → Commit everything together
-
-# Example: Single feature with multiple beads tasks
-bd close beads-101 --reason="Schema implemented" --json
-bd close beads-102 --reason="API implemented" --json
-bd close beads-103 --reason="Tests added" --json
-
-# Sync beads to JSONL (DO NOT commit yet)
-bd sync --flush-only
-
-# Then make ONE commit with code + beads metadata together
-git add <all-changed-files> .beads/issues.jsonl .beads/interactions.jsonl
-git commit -m "feat: add user profile endpoint
-
-Implemented profile management with schema, API endpoints, and tests.
-
-Beads Tasks:
-- beads-101: Created User schema in models/User.kt
-- beads-102: Built GET/POST /api/profile endpoints
-- beads-103: Added integration tests with 90% coverage"
-git push
-
-# Commit message format (conventional commits):
-# <type>: <succinct description>           ← 50 chars max
-#
-# <detailed body - optional>                ← Explains "why" not "what"
-#
-# Beads Tasks:                              ← Lists each task accomplished
-# - beads-xxx: <what this task did>
-# - beads-yyy: <what this task did>
-
-# Commit types: feat, fix, refactor, test, docs, chore, style, perf
-
-# Rules:
-# ✅ First line: 50 characters max, imperative mood ("add" not "added")
-# ✅ Body: Optional, provides context and reasoning
-# ✅ Beads section: Lists each task with specific accomplishment
-# ❌ Don't put beads IDs in subject line (keeps it clean)
-```
 
 ### Committing Beads Changes
 
@@ -1203,88 +1089,6 @@ bd create --title="Write tests for X" --type=task --priority=2 --description="..
 3. **Validate before pushing** - Run `validate-beads-state.sh`
 4. **Make atomic commits** - Close → Sync → Commit pattern
 5. **Review before closing sessions** - Are all tasks closed? Is everything pushed?
-
----
-
-❌ **Starting work without git branch setup**
-- **Impact**: Working on stale code, merge conflicts, lost work
-- **Fix**: Always complete Git Branch Setup checklist FIRST (or run git-branch-setup.sh)
-
-❌ **Working directly on default branch**
-- **Impact**: Cannot create clean pull requests, pollutes main history
-- **Fix**: Always work on feature branches (feature/<description>)
-
-❌ **Not setting upstream tracking**
-- **Impact**: git push fails, unclear branch status
-- **Fix**: Always use `git push -u origin <branch>` for new branches
-
-❌ **Starting code before creating task**
-- **Impact**: Lost context if session interrupted
-- **Fix**: Always `bd create` BEFORE first file edit
-
-❌ **Committing after each beads task completion**
-- **Impact**: Noisy git history (10+ commits per feature), harder PR reviews, less meaningful commits
-- **Fix**: Close ALL related beads tasks FIRST, then make ONE meaningful commit
-- **Example BAD**: 5 commits for "feat: add profile", "add tests", "fix lint", "update docs", "final fix"
-- **Example GOOD**: 1 commit "feat: add user profile with tests and docs - Closes: beads-101, beads-102, beads-103"
-
-❌ **Closing task without reason**
-- **Impact**: No breadcrumbs for future debugging
-- **Fix**: Always use `--reason="detailed explanation"`
-
-❌ **Forgetting bd sync before session end**
-- **Impact**: Task state not exported to JSONL, `.beads/issues.jsonl` left uncommitted
-- **Fix**: Add to session completion checklist (see session-completion.md)
-- **Fix**: Run `bd sync --flush-only` then commit `.beads/issues.jsonl`
-
-❌ **Not committing .beads/issues.jsonl changes**
-- **Impact**: Task tracking history is lost, other developers can't see completed work
-- **Fix**: After `bd sync`, run `git add .beads/issues.jsonl && git commit -m "chore: sync beads tracking"`
-- **Note**: `.beads/issues.jsonl` IS tracked by git (see `.beads/.gitignore` comments)
-
-❌ **Not checking bd ready at session start**
-- **Impact**: Miss available work, duplicate effort
-- **Fix**: `bd ready --json` FIRST command each session
-
-❌ **Creating tasks too large**
-- **Impact**: Tasks stay in_progress for days, blocking others
-- **Fix**: Break into sub-tasks with dependencies
-
-❌ **Using wrong priority values**
-- **Impact**: `bd create --priority=high` FAILS (expects 0-4)
-- **Fix**: 0=critical, 1=high, 2=medium, 3=low, 4=backlog
-
-❌ **Not committing beads JSONL changes**
-- **Impact**: Task tracking history is lost, other developers can't see completed work
-- **Fix**: After feature commit + `bd sync`, run `git add .beads/*.jsonl && git commit -m "chore: sync beads tracking"`
-- **Note**: `.beads/issues.jsonl` IS tracked by git (see `.beads/.gitignore` comments)
-
-❌ **Forgetting to add task descriptions**
-- **Impact**: Future sessions lack context, can't remember why task exists
-- **Fix**: Always use `--description="Detailed context"` when creating tasks
-- **Good**: `bd create --title="Fix null pointer" --description="UserService.validate() throws NPE when email is null - add null check before regex validation"`
-- **Bad**: `bd create --title="Fix null pointer"` (no description)
-
-❌ **Not handling squash merge conflicts properly**
-- **Impact**: Spending hours resolving conflicts that can't be resolved
-- **Fix**: Recognize squash merge pattern, start fresh branch from updated main
-
-❌ **Forgetting to set git remote HEAD**
-- **Impact**: Automated scripts fail to detect default branch
-- **Fix**: Run `git remote set-head origin --auto` once per repo
-
-❌ **Creating git setup beads tasks unnecessarily**
-- **Impact**: Inflates task count with infrastructure work
-- **Fix**: Only create beads task if git setup FAILS and requires debugging
-
-❌ **Not validating beads state before pushing**
-- **Impact**: Push incomplete work, leave tasks stuck in_progress
-- **Fix**: Run `validate-beads-state.sh` before every push
-
-❌ **Batch-closing tasks after completing all work**
-- **Impact**: While this is GOOD for commits, ensure you're closing tasks as you finish them (not waiting until end of day)
-- **Fix**: Close each task immediately after completing it, THEN batch them into one commit
-- **Example**: Close beads-101 (11am), close beads-102 (2pm), close beads-103 (4pm), THEN commit at 4pm with all three IDs
 
 ---
 
