@@ -61,6 +61,104 @@ Specialized agent for Spring Boot/Kotlin/Gradle development.
    - **justfile** (`just build`, `just test`, `just run-api`)
    - **Docker** (`just docker-up` for Postgres + Redis)
 
+## 📖 API Documentation Workflow (Spec-First)
+
+**All new or changed endpoints MUST follow this order — no exceptions.**
+
+### Step 0: Write the spec before any code
+
+Before writing a single line of Kotlin:
+
+1. **Add or update schemas** in `apps/api/spec/schemas/` (reusable component objects).
+2. **Add or update endpoint paths** in the matching `apps/api/spec/endpoints/<resource>.yaml`.
+3. **Wire into `openapi.yaml`** — add path entries under `paths:` and any new schema refs under `components/schemas:`.
+4. **Share for review** (open a PR / paste the YAML diff in the beads task notes).
+5. **Wait for approval**, then proceed to implementation.
+
+> ⚠️ Never implement a controller method that hasn't been specced and reviewed first.
+
+### YAML conventions
+
+- All field names are **snake_case** (enforced by `spring.jackson.property-naming-strategy: SNAKE_CASE`).
+- Schema files contain bare schema objects — no `components/schemas:` wrapper.
+- Endpoint files contain bare path objects — no `paths:` wrapper.
+- Use `$ref` pointers in `openapi.yaml` to compose them.
+
+### Controller annotation pattern
+
+Every controller must carry matching springdoc annotations:
+
+```kotlin
+@Tag(name = "Accounts", description = "Financial account management")
+@RestController
+@RequestMapping("/api/v1/accounts")
+class AccountController(private val accountService: AccountService) {
+
+    @Operation(
+        summary = "Create account",
+        description = "Creates a new account for the currently authenticated user"
+    )
+    @ApiResponses(
+        ApiResponse(responseCode = "201", description = "Account created"),
+        ApiResponse(responseCode = "400", description = "Validation error",
+            content = [Content(schema = Schema(implementation = ValidationErrorResponse::class))]),
+        ApiResponse(responseCode = "500", description = "Internal server error",
+            content = [Content(schema = Schema(implementation = ErrorResponse::class))])
+    )
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    fun create(@Valid @RequestBody request: CreateAccountRequest): AccountResponse =
+        accountService.createAccount(request)
+
+    @Operation(summary = "Get account by ID")
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "Account found"),
+        ApiResponse(responseCode = "404", description = "Account not found",
+            content = [Content(schema = Schema(implementation = ErrorResponse::class))])
+    )
+    @GetMapping("/{id}")
+    fun getById(
+        @Parameter(description = "Account ID") @PathVariable id: Long
+    ): AccountResponse = accountService.getAccount(id)
+}
+```
+
+### DTO annotation pattern
+
+All request/response DTOs must include `@JsonProperty` for every snake_case field and `@Schema` for OpenAPI docs:
+
+```kotlin
+data class CreateAccountRequest(
+    @JsonProperty("name")
+    @field:NotBlank(message = "Account name is required")
+    @Schema(description = "Display name of the account", example = "My Checking Account")
+    val name: String,
+
+    @JsonProperty("type")
+    @field:NotBlank(message = "Account type is required")
+    @Schema(description = "Account type", example = "checking", allowableValues = ["checking", "savings", "credit"])
+    val type: String,
+)
+```
+
+### Spec-first checklist (before writing Kotlin)
+
+- [ ] Schema objects written in `apps/api/spec/schemas/<Resource>.yaml`
+- [ ] Endpoint paths written in `apps/api/spec/endpoints/<resource>.yaml`
+- [ ] `apps/api/spec/openapi.yaml` updated with new paths and schema refs
+- [ ] Spec diff shared for review and approved
+
+### Verify spec matches implementation
+
+After implementing, confirm the live Swagger UI reflects the spec:
+
+```bash
+just run-api
+# Open http://localhost:8080/swagger-ui.html — compare against spec/openapi.yaml
+```
+
+---
+
 ## 🎨 Design Patterns (Top 10)
 
 Apply these patterns appropriately:
@@ -603,20 +701,34 @@ When encountering errors:
 
 Before marking task as `in_review`:
 
+**API Documentation (spec-first — must be done BEFORE coding)**
+- [ ] Schema objects written/updated in `apps/api/spec/schemas/`
+- [ ] Endpoint paths written/updated in `apps/api/spec/endpoints/`
+- [ ] `apps/api/spec/openapi.yaml` updated with new paths and schema refs
+- [ ] Spec approved before any Kotlin was written
+
+**Implementation**
 - [ ] All files follow naming conventions (PascalCase for classes)
 - [ ] Package declarations correct (`com.sans.souci.spending_tracker.*`)
 - [ ] 4-space indentation used
 - [ ] No nested if statements (guard clauses used)
 - [ ] Input validation with `@Valid` on DTOs
+- [ ] DTO fields annotated with `@JsonProperty` (snake_case) and `@Schema`
+- [ ] Controller annotated with `@Tag`, `@Operation`, `@ApiResponses`, `@Parameter`
 - [ ] SQL queries use JOOQ parameterization (no string concat)
 - [ ] Services use dependency injection (constructor injection)
+
+**Testing**
 - [ ] Tests written with Kotest BehaviorSpec
 - [ ] Tests use given-when-then pattern
 - [ ] MockK used for mocking (not Mockito)
 - [ ] Test fixtures created for reusable test data
 - [ ] All tests passing (`just test`)
+
+**Security & Housekeeping**
 - [ ] No hardcoded secrets (use environment variables)
 - [ ] Error messages don't expose internal details
+- [ ] Swagger UI at `http://localhost:8080/swagger-ui.html` matches the spec
 - [ ] Beads task updated with implementation notes
 
 ## 📚 Additional Resources
@@ -629,13 +741,17 @@ Before marking task as `in_review`:
 
 A task is successfully implemented when:
 
-1. ✅ All production code follows project conventions
-2. ✅ Tests achieve >80% coverage of new code
-3. ✅ All tests pass (`just test`)
-4. ✅ No security vulnerabilities introduced
-5. ✅ Code follows DRY and SIMPLE principles
-6. ✅ Beads task updated with clear notes
-7. ✅ Build-orchestrator notified of completion
+1. ✅ Spec written, reviewed, and approved **before** any code was written
+2. ✅ All production code follows project conventions
+3. ✅ DTOs annotated with `@JsonProperty` (snake_case) and `@Schema`
+4. ✅ Controller annotated with `@Tag`, `@Operation`, `@ApiResponses`
+5. ✅ Swagger UI matches `apps/api/spec/openapi.yaml`
+6. ✅ Tests achieve >80% coverage of new code
+7. ✅ All tests pass (`just test`)
+8. ✅ No security vulnerabilities introduced
+9. ✅ Code follows DRY and SIMPLE principles
+10. ✅ Beads task updated with clear notes
+11. ✅ Build-orchestrator notified of completion
 
 ---
 
